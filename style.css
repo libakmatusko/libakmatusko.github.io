@@ -5,8 +5,27 @@
 body{
     box-align: center;
 }
-#button{
-    margin: auto;
+.button {
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    border: 2px solid grey;
+}
+.button:hover {background-color: grey;}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 #game{
     margin: auto;
@@ -17,12 +36,12 @@ body{
 #character{
     width: 20px;
     height: 50px;
-    background-color: red;
+    background-color: gray;
     position: relative;
     top: 150px;
 }
 .animate{
-    animation: jump 500ms;
+    animation: jump 400ms;
 }
 @keyframes jump{
     0%{top: 150px;}
@@ -37,7 +56,6 @@ body{
     position: relative;
     top: 130px;
     left: 980px;
-    animation-timing-function: linear;
 }
 @keyframes block{
     0%{left: 980px;}
@@ -50,11 +68,20 @@ body{
     position: relative;
     top: 110px;
     left: 980px;
-    animation-timing-function: linear;
 }
 @keyframes block2{
-    0%{left: 480px;}
-    50%{left: -20px;}
-    51%{left: 980px;}
-    100%{left: 480px;}
+    0%{left: 980px;}
+    100%{left: -20px;}
+}
+#block3{
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    position: relative;
+    top: 90px;
+    left: 980px;
+}
+@keyframes block3{
+    0%{left: 980px;}
+    100%{left: -20px;}
 }
