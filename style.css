@@ -49,21 +49,24 @@ body{
 }
 @keyframes jump{
     0%{top: 300px;}
-    30%{top: 200px;}
-    70%{top: 200px;}
+    10%{top: 265px;}
+    20%{top: 235px;}
+    30%{top: 215px;}
+    40%{top: 205px;}
+    50%{top: 200px;}
+    60%{top: 205px;}
+    70%{top: 215px;}
+    80%{top: 235px;}
+    90%{top: 265px;}
     100%{top: 300px;}
 }
-#block{
+#block1{
     width: 40px;
     height: 40px;
     background-color: blue;
     position: relative;
     top: 260px;
     left: 100%;
-}
-@keyframes block{
-    0%{left: 100%-40px;}
-    100%{left: -40px;}
 }
 #block2{
     width: 40px;
@@ -73,10 +76,6 @@ body{
     top: 220px;
     left: 100%;
 }
-@keyframes block2{
-    0%{left: 100%-40px;}
-    100%{left: -40px;}
-}
 #block3{
     width: 40px;
     height: 40px;
@@ -85,7 +84,39 @@ body{
     top: 180px;
     left: 100%;
 }
-@keyframes block3{
-    0%{left: 100%-40px;}
+#block4{
+    width: 40px;
+    height: 40px;
+    background-color: cyan;
+    position: relative;
+    top: 140px;
+    left: 100%;
+}
+#block5{
+    width: 40px;
+    height: 40px;
+    background-color: yellow;
+    position: relative;
+    top: 100px;
+    left: 100%;
+}
+#block6{
+    width: 40px;
+    height: 40px;
+    background-color: pink;
+    position: relative;
+    top: 60px;
+    left: 100%;
+}
+#block7{
+    width: 40px;
+    height: 40px;
+    background-color: darkmagenta;
+    position: relative;
+    top: 20px;
+    left: 100%;
+}
+@keyframes block{
+    0%{left: 100%-80px;}
     100%{left: -40px;}
 }
