@@ -2,7 +2,14 @@
     padding: 0;
     margin: 0;
 }
+body{
+    box-align: center;
+}
+#button{
+    margin: auto;
+}
 #game{
+    margin: auto;
     width: 1000px;
     height: 200px;
     border: 1px solid black;
@@ -30,7 +37,6 @@
     position: relative;
     top: 130px;
     left: 980px;
-    animation: block 2s infinite;
     animation-timing-function: linear;
 }
 @keyframes block{
@@ -43,8 +49,7 @@
     background-color: green;
     position: relative;
     top: 110px;
-    left: 480px;
-    animation: block2 2s infinite;
+    left: 980px;
     animation-timing-function: linear;
 }
 @keyframes block2{
