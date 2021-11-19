@@ -51,7 +51,7 @@ var checkDead  = setInterval(function(){
     blockLeft = parseInt(window.getComputedStyle(block).getPropertyValue("left"));
     blockLeft2 = parseInt(window.getComputedStyle(block2).getPropertyValue("left"));
     blockLeft3 = parseInt(window.getComputedStyle(block3).getPropertyValue("left"));
-    if(blockLeft<20 && blockLeft>0 && charakterTop>=130){
+    if(blockLeft<40 && blockLeft>0 && charakterTop>=260){
         block.style.animation = "none";
         block2.style.animation = "none";
         block3.style.animation = "none";
@@ -59,7 +59,7 @@ var checkDead  = setInterval(function(){
         alert("you losed");
         start();
     }
-    else if(blockLeft2<20 && blockLeft2>0 && charakterTop>=130){
+    else if(blockLeft2<40 && blockLeft2>0 && charakterTop>=260){
         block.style.animation = "none";
         block2.style.animation = "none";
         block3.style.animation = "none";
@@ -67,7 +67,7 @@ var checkDead  = setInterval(function(){
         alert("you losed");
         start();
     }
-    else if(blockLeft3<20 && blockLeft3>0 && charakterTop>=130){
+    else if(blockLeft3<40 && blockLeft3>0 && charakterTop>=260){
         block.style.animation = "none";
         block2.style.animation = "none";
         block3.style.animation = "none";
