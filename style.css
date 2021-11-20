@@ -5,6 +5,9 @@
 body{
     box-align: center;
 }
+h1{
+    margin: auto;
+}
 .button {
     border: none;
     color: grey;
@@ -67,7 +70,6 @@ body{
 #block1{
     width: 40px;
     height: 40px;
-    background-color: blue;
     position: relative;
     top: 260px;
     left: 100%;
@@ -75,7 +77,6 @@ body{
 #block2{
     width: 40px;
     height: 40px;
-    background-color: green;
     position: relative;
     top: 220px;
     left: 100%;
@@ -83,7 +84,6 @@ body{
 #block3{
     width: 40px;
     height: 40px;
-    background-color: red;
     position: relative;
     top: 180px;
     left: 100%;
@@ -91,7 +91,6 @@ body{
 #block4{
     width: 40px;
     height: 40px;
-    background-color: cyan;
     position: relative;
     top: 140px;
     left: 100%;
@@ -99,7 +98,6 @@ body{
 #block5{
     width: 40px;
     height: 40px;
-    background-color: yellow;
     position: relative;
     top: 100px;
     left: 100%;
@@ -107,7 +105,6 @@ body{
 #block6{
     width: 40px;
     height: 40px;
-    background-color: pink;
     position: relative;
     top: 60px;
     left: 100%;
@@ -115,7 +112,6 @@ body{
 #block7{
     width: 40px;
     height: 40px;
-    background-color: darkmagenta;
     position: relative;
     top: 20px;
     left: 100%;

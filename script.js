@@ -21,7 +21,6 @@ highSpeed = 1800
 lowSpeed = 2000
 function speed(highSpeed, lowSpeed){
     Speed = Math.random() * (lowSpeed - highSpeed) + highSpeed;
-    console.log("speed of block: " + Speed)
     return Speed;
 }
 function acceleration(){
@@ -75,6 +74,7 @@ function prekazka(cisloPrekazky){
     if (block.hasAttribute("style")){
         block.removeAttribute("style")
     }
+    block.style["background-color"] = "rgb(" + (Math.round(Math.random() * 256)) + ", " + (Math.round(Math.random() * 256)) + ", " + (Math.round(Math.random() * 256)) + ")";
     block.style["animation-duration"] = speed(highSpeed, lowSpeed) + "ms";
     block.style["animation-timing-function"] = "linear";
     block.style["animation-name"] = "block";
@@ -83,7 +83,7 @@ function prekazka(cisloPrekazky){
     if (blockStaly.hasAttribute("style")){
         blockStaly.removeAttribute("style")
     }
-    }, speed(highSpeed, lowSpeed))
+    }, speed(highSpeed, lowSpeed) + 200)
 }
 function stop(){
     run = false
@@ -110,9 +110,8 @@ var checkDead  = setInterval(function(){
             score = score+1
             ScoreP.innerText = score
             if(score % 100==0){
-                highSpeed = highSpeed / 10 * 9
-                lowSpeed = lowSpeed / 10 * 9
-                console.log("hhhhhhhhhhhhhhhhhhhhhhhhh", highSpeed, lowSpeed)
+                highSpeed = highSpeed * 8 / 10
+                lowSpeed = lowSpeed * 8 / 10
             }
             a = 0
         }
@@ -120,6 +119,9 @@ var checkDead  = setInterval(function(){
 },10);
 
 function prehra(){
+    //povodna rychlost
+    highSpeed = 1800
+    lowSpeed = 2000
     //best score
     if(score>bestScore){
         bestScore = score
