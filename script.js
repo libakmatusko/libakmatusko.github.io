@@ -56,7 +56,7 @@ function restart(){
 async function start(){
     while (run==true) {
         speeed = ((Math.random() * 800) + 4000 - 300 - speed(highSpeed, lowSpeed)) / 2
-        console.log("waiting: " + speeed)
+        //console.log("waiting: " + speeed)
         await sleep(speeed);
         noveCislo = Math.floor(Math.random()*7)+1
         while (stareCislo==noveCislo || staronoveCislo==noveCislo || mladeCislo==noveCislo){
