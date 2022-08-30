@@ -1,0 +1,22 @@
+body{
+    background-color: whitesmoke;
+    margin: 0px;
+}
+.meno{
+    color: cyan;
+    font-family: 'Courier', monospace;
+    font-weight: bolder;
+    font-style: italic;
+}
+.nadpis{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    width:100%;
+    height: 100px;
+    font-size: xx-large;
+}
+.vsetko{
+    margin: 8px;
+}
