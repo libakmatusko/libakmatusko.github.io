@@ -8,7 +8,7 @@ th{
     width: 33.33%;
     border-collapse: collapse;
     border: 2px solid black;
-    padding: 8px;
+    padding: 2px;
 }
 th:active{
     background-color: white;
@@ -20,6 +20,8 @@ table{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 24px;
 }
+
+
   .polyhedron {
     position: relative;
       margin: 5em auto 0;
@@ -80,4 +82,5 @@ table{
 #text{
     text-align: justify;
     padding: 10px;
+    font-size: 20px;
 }
