@@ -79,8 +79,42 @@ table{
     background: blue;
   }
 
+.pyt-triangle{
+    width: 0;
+    height: 0;
+    border-left: 0px solid transparent; /* Adjust the size by changing the border width */
+    border-right: 200px solid transparent; /* Adjust the size by changing the border width */
+    border-bottom: 150px solid purple; /* Adjust the size and color as needed */
+    animation: rotation 20s infinite;
+    transform-origin: bottom right;
+    position: absolute;
+    z-index: 1;
+    opacity: 0.7;
+}
+.pyt-square{
+    width: 250px;
+    height: 250px;
+    transform: rotate(36.87deg);
+    background-color: aqua;
+    position: absolute;
+    z-index: 0;
+}
+@keyframes rotation{
+    0%   {transform: translate(-75px, 100px) rotate(0deg);}
+    25%  {transform: translate(75px, -100px) rotate(-90deg);}
+    50%  {transform: translate(-125px, -250px) rotate(-180deg);}
+    75%  {transform: translate(-275px, -50px) rotate(-270deg);}
+    100% {transform: translate(-75px, 100px) rotate(-360deg);}
+}
 #text{
     text-align: justify;
     padding: 10px;
     font-size: 20px;
+}
+#animation{
+    height: 512px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    position: relative;
 }
