@@ -15,3 +15,106 @@ table{
     border-collapse: collapse;
     border: 3px solid black;
 }
+.polyhedron {
+    position: relative;
+      margin: 5em auto 0;
+      padding: 0;
+      width: 16em; height: 16em;
+    perspective: 100em;
+      transform-style: preserve-3d;
+    animation: rot 15 s infinite linear;
+  }
+  @keyframes rot {
+      from { transform: rotateZ(-15deg) rotateX(45deg) rotateY(0deg); }
+      to { transform: rotateZ(345deg) rotateX(-315deg) rotateY(360deg); }
+  }
+  .side, .side:after {
+    overflow: hidden;
+    position: absolute;
+    width: inherit; height: inherit;
+    opacity: 0.7;
+    
+  }
+  .triangle:after {
+    transform: scaleX(1.155) skewY(-30deg) rotate(-30deg) translateY(-50%);
+    content: '';
+  }
+  .tetrahedron .side.triangle:first-child {
+    transform: translateZ(4.6188em) 
+      rotateX(19.47deg) 
+      rotate(30deg) skewY(30deg) scaleX(.866);
+  }
+  .tetrahedron .side.triangle:first-child:after {
+    background: blue ;
+    
+  }
+  .tetrahedron .side.triangle:nth-child(2) {
+    transform: rotateY(120deg) translateZ(4.6188em) 
+      rotateX(19.47deg) 
+      rotate(30deg) skewY(30deg) scaleX(.866);
+  }
+  .tetrahedron .side.triangle:nth-child(2):after {
+    background: black ;
+    
+  }
+  .tetrahedron .side.triangle:nth-child(3) {
+    transform: rotateY(-120deg) translateZ(4.6188em) 
+      rotateX(19.47deg) 
+      rotate(30deg) skewY(30deg) scaleX(.866);
+  }
+  .tetrahedron .side.triangle:nth-child(3):after {
+    background: red ;
+    
+  }
+  .tetrahedron .side.triangle:last-child {
+    transform: translateZ(4.6188em) 
+      rotateX(90deg) rotateY(180deg)
+      rotate(30deg) skewY(30deg) scaleX(.866);
+  }
+  .tetrahedron .side.triangle:last-child:after {
+    background: green ;
+    
+  }
+
+
+
+  .triangle:after {
+    transform: scaleX(1.155) skewY(-30deg) rotate(-30deg) translateY(-50%);
+    content: '';
+  }
+  .tetrahedron .side.triangle:first-child {
+    transform: translateZ(4.6188em) 
+      rotateX(19.47deg) 
+      rotate(30deg) skewY(30deg) scaleX(.866);
+  }
+  .tetrahedron .side.triangle:first-child:after {
+    background: blue ;
+    
+  }
+  .tetrahedron .side.triangle:nth-child(2) {
+    transform: rotateY(120deg) translateZ(4.6188em) 
+      rotateX(19.47deg) 
+      rotate(30deg) skewY(30deg) scaleX(.866);
+  }
+  .tetrahedron .side.triangle:nth-child(2):after {
+    background: black ;
+    
+  }
+  .tetrahedron .side.triangle:nth-child(3) {
+    transform: rotateY(-120deg) translateZ(4.6188em) 
+      rotateX(19.47deg) 
+      rotate(30deg) skewY(30deg) scaleX(.866);
+  }
+  .tetrahedron .side.triangle:nth-child(3):after {
+    background: red ;
+    
+  }
+  .tetrahedron .side.triangle:last-child {
+    transform: translateZ(4.6188em) 
+      rotateX(90deg) rotateY(180deg)
+      rotate(30deg) skewY(30deg) scaleX(.866);
+  }
+  .tetrahedron .side.triangle:last-child:after {
+    background: green ;
+    
+  }
