@@ -23,6 +23,7 @@ table{
     perspective: 100em;
       transform-style: preserve-3d;
     animation: rot 20s infinite linear;
+    zoom: 2;
   }
   @keyframes rot {
       from { transform: rotateZ(-15deg) rotateX(45deg) rotateY(0deg); }
