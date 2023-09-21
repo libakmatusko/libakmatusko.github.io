@@ -10,10 +10,15 @@ th{
     border: 2px solid black;
     padding: 8px;
 }
+th:active{
+    background-color: white;
+}
 table{
     width: 100%;
     border-collapse: collapse;
     border: 3px solid black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
 }
   .polyhedron {
     position: relative;
@@ -71,3 +76,8 @@ table{
   .tetrahedron .side.triangle:last-child:after {
     background: blue;
   }
+
+#text{
+    text-align: justify;
+    padding: 10px;
+}
