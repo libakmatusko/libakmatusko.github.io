@@ -5,7 +5,6 @@ body{
 }
 th{
     background-color: antiquewhite;
-    width: 33.33%;
     border-collapse: collapse;
     border: 2px solid black;
     padding: 2px;
@@ -15,12 +14,19 @@ th:active{
 }
 table{
     width: 100%;
+    height: 100%;
     border-collapse: collapse;
     border: 3px solid black;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 24px;
 }
 
+#mobile-bar{display: none}
+#PC-bar{display: table; width: 100%}
+@media (max-width: 980px){
+#PC-bar{display: none}
+#mobile-bar{display: table; width: 100%; height: 160px;}
+}
 
   .polyhedron {
     position: relative;
@@ -86,24 +92,31 @@ table{
     border-right: 200px solid transparent; /* Adjust the size by changing the border width */
     border-bottom: 150px solid purple; /* Adjust the size and color as needed */
     animation: rotation 20s infinite;
-    transform-origin: bottom right;
+    transform-origin: bottom left;
     position: absolute;
-    z-index: 1;
+    z-index: 2;
     opacity: 0.7;
 }
-.pyt-square{
+.pyt-square_c{
     width: 250px;
     height: 250px;
     transform: rotate(36.87deg);
     background-color: aqua;
     position: absolute;
-    z-index: 0;
+    z-index: 1;
+}
+.pyt-square_ab{
+    width: 350px;
+    height: 350px;
+    border: 4px solid black;
+    position: absolute;
+    z-index: 3;
 }
 @keyframes rotation{
     0%   {transform: translate(-75px, 100px) rotate(0deg);}
-    25%  {transform: translate(75px, -100px) rotate(-90deg);}
-    50%  {transform: translate(-125px, -250px) rotate(-180deg);}
-    75%  {transform: translate(-275px, -50px) rotate(-270deg);}
+    25%  {transform: translate(275px, 100px) rotate(-90deg);}
+    50%  {transform: translate(275px, -250px) rotate(-180deg);}
+    75%  {transform: translate(-75px, -250px) rotate(-270deg);}
     100% {transform: translate(-75px, 100px) rotate(-360deg);}
 }
 #text{
