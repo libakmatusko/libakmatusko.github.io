@@ -118,7 +118,8 @@ table{
     50%  {transform: translate(275px, -250px) rotate(-180deg);}
     75%  {transform: translate(-75px, -250px) rotate(-270deg);}
     100% {transform: translate(-75px, 100px) rotate(-360deg);}
-}
+}  
+
 #text{
     text-align: justify;
     padding: 10px;
