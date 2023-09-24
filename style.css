@@ -149,7 +149,6 @@ h1{
     position: relative;
     width: 200px;
     height: 400px;
-    left: 100px;
     animation: spin 16s infinite linear;
     transform-style: preserve-3d;
   }
