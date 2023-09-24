@@ -67,7 +67,7 @@ h1{
       from { transform: rotateZ(-15deg) rotateX(45deg) rotateY(0deg); }
       to { transform: rotateZ(345deg) rotateX(-315deg) rotateY(360deg); }
   }
-  .side, .side:after {
+ .tetrahedron .side, .side:after {
     overflow: hidden;
     position: absolute;
     width: inherit; height: inherit;
@@ -148,7 +148,8 @@ h1{
 .solid {
     position: relative;
     width: 200px;
-    height: 200px;
+    height: 400px;
+    left: 100px;
     animation: spin 16s infinite linear;
     transform-style: preserve-3d;
   }
