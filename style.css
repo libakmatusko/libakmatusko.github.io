@@ -156,6 +156,7 @@ h1{
     position: absolute;
     left: 0;
     bottom: 50%;
+    width: 0;
     border-bottom: 173.2px solid black;
     border-left: 100px solid transparent;
     border-right: 100px solid transparent;
