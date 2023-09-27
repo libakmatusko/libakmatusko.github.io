@@ -271,3 +271,16 @@ h1{
     justify-content: center;
     zoom: 1.5;
 }
+#ai_chat {
+    text-align: center;
+}
+#question_form {
+    margin-bottom: 20px;
+}
+label {
+    font-weight: bold;
+}
+input[type="text"], input[type="submit"] {
+    padding: 5px;
+    margin: 5px;
+}
