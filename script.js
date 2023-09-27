@@ -1,6 +1,6 @@
 var url = window.location.pathname;
 var filename = url.substring(url.lastIndexOf('/')+1);
-alert(filename);
+//alert(filename);
 
 let questionForm = document.getElementById("question_form");
 questionForm.addEventListener("submit", (e) => {
@@ -8,12 +8,13 @@ questionForm.addEventListener("submit", (e) => {
 
     let question = document.getElementById("question");
     if (question.value != "tu napíš svoju otázku") {
-        // tu sa bude spracovavat request s API
+        //tu sa podla stranky dopise pre otazku o akej je teme
         switch(filename) {
             case "pythagoras.html":
                 question = "Mám otáazku ohľadom pytagorvho trojuholníka: " + queastion
                 break;
         }
+        // tu sa bude spracovavat request s API
         //question je vstup
         console.log(question.value)
         //answer buder vystup.
