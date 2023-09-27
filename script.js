@@ -6,12 +6,13 @@ let questionForm = document.getElementById("question_form");
 questionForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    let question = document.getElementById("question");
+    var question = document.getElementById("question");
     if (question.value != "tu napíš svoju otázku") {
         //tu sa podla stranky dopise pre otazku o akej je teme
         switch(filename) {
             case "pythagoras.html":
-                question = "Mám otáazku ohľadom pytagorvho trojuholníka: " + queastion
+                console.log("cjsdbchsbdhkcs")
+                question.value = "Mám otáazku ohľadom pytagorvho trojuholníka: " + question.value
                 break;
         }
         // tu sa bude spracovavat request s API
