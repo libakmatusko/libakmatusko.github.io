@@ -11,8 +11,13 @@ questionForm.addEventListener("submit", (e) => {
         //tu sa podla stranky dopise pre otazku o akej je teme
         switch(filename) {
             case "pythagoras.html":
-                console.log("cjsdbchsbdhkcs")
-                question.value = "Mám otáazku ohľadom pytagorvho trojuholníka: " + question.value
+                question.value = "Mám otáazku ohľadom pytagorovho trojuholníka: " + question.value
+                break;
+            case "icosahedron.html":
+                question.value = "Mám otáazku ohľadom Ikosahedronu: " + question.value
+                break;
+            case "tetrahedron.html":
+                question.value = "Mám otáazku ohľadom Tetrahedronu: " + question.value
                 break;
         }
         // tu sa bude spracovavat request s API
