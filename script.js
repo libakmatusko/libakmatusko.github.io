@@ -21,10 +21,30 @@ questionForm.addEventListener("submit", (e) => {
                 break;
         }
         // tu sa bude spracovavat request s API
+        var request = new Request('https://api.openai.com/v1/chat/completions', {
+    method: 'POST', 
+    mode: 'cors', 
+    redirect: 'follow',
+    headers: new Headers({
+        'Content-Type': 'application/json',
+    "Authorization": "Bearer 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"
+    }),
+  body: JSON.stringify({
+"model": "gpt-3.5-turbo",
+"messages": [{"role": "user", "content": question.value}],
+"temperature": 0.7
+   })
+});
+fetch(request).then(function(response) { 
+    // Convert to JSON
+    return response.json();
+}).then(function(j) {
+    // Yay, j is a JavaScript object
+    answer = j["choices"][0]["message"]["content"]
+});
         //question je vstup
         console.log(question.value)
         //answer buder vystup.
-        let answer = "Odpoved od chat GPT"
         console.log(answer)
         document.getElementById("answer").innerText = answer;
     }
