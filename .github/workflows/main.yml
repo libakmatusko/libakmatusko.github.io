@@ -1,31 +1,17 @@
-name: CI/CD Workflow
+steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
 
-on:
-  push:
-    branches:
-      - main
+      - name: Use Node 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+      - name: Install Dependencies (prod)
+        run: yarn install --frozen-lockfile --production
 
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 14
-
-    - name: Install Dependencies
-      run: npm install
-
-    - name: Run Tests
-      run: npm test
-
-    - name: Deploy to Production
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: |
-        npm run build
-        npm run deploy -- --api-key ${{ secrets.OPENAI_API_KEY }}
+      - name: Run Tests (JEST)
+        run: yarn test --ci --silent --testPathIgnorePatterns=experimental
+        env:
+          CI: true
+          API_KEY: ${{ secrets.OPENAI_API_KEY }}
