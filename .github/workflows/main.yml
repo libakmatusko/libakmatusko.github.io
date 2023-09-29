@@ -28,4 +28,4 @@ jobs:
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         npm run build
-        npm run deploy -- --api-key ${{ secrets.API_KEY }}
+        npm run deploy -- --api-key ${{ secrets.OPENAI_API_KEY }}
