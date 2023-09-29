@@ -48,9 +48,11 @@ h1{
 
 #mobile-bar{display: none}
 #PC-bar{display: table; width: 100%}
+#ai_chat{zoom: 1.5}
 @media (max-width: 980px){
 #PC-bar{display: none}
 #mobile-bar{display: table; width: 100%; height: 160px;}
+#ai_chat{zoom: 2;}
 }
 
   .polyhedron {
