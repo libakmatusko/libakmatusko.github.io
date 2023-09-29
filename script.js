@@ -3,7 +3,7 @@ var filename = url.substring(url.lastIndexOf('/')+1);
 //alert(filename);
 
 let questionForm = document.getElementById("question_form");
-questionForm.addEventListener("submit", (e) => {
+questionForm.addEventListener("submit", (e) =>  {
     e.preventDefault();
 
     var question = document.getElementById("question");
@@ -27,7 +27,7 @@ questionForm.addEventListener("submit", (e) => {
     redirect: 'follow',
     headers: new Headers({
         'Content-Type': 'application/json',
-    "Authorization": "Bearer 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"
+    "Authorization": "Bearer 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"
     }),
   body: JSON.stringify({
 "model": "gpt-3.5-turbo",
@@ -48,4 +48,5 @@ fetch(request).then(function(response) {
         console.log(answer)
         document.getElementById("answer").innerText = answer;
 });
+    }
 })
