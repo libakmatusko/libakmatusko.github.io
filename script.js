@@ -40,12 +40,12 @@ fetch(request).then(function(response) {
     return response.json();
 }).then(function(j) {
     // Yay, j is a JavaScript object
+    console.log(j)
     answer = j["choices"][0]["message"]["content"]
-});
         //question je vstup
         console.log(question.value)
         //answer buder vystup.
         console.log(answer)
         document.getElementById("answer").innerText = answer;
-    }
+});
 })
