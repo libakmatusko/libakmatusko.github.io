@@ -21,13 +21,14 @@ questionForm.addEventListener("submit", (e) =>  {
                 break;
         }
         // tu sa bude spracovavat request s API
+        const apiKey = process.env.API_KEY;
         var request = new Request('https://api.openai.com/v1/chat/completions', {
     method: 'POST', 
     mode: 'cors', 
     redirect: 'follow',
     headers: new Headers({
         'Content-Type': 'application/json',
-    "Authorization": "Bearer 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"
+    "Authorization": apiKey
     }),
   body: JSON.stringify({
 "model": "gpt-3.5-turbo",
