@@ -21,7 +21,7 @@ questionForm.addEventListener("submit", (e) =>  {
                 break;
         }
         // tu sa bude spracovavat request s API
-        const apiKey = process.env.API_KEY;
+        const apiKey = process.env['OPENAI_API_KEY'] || process.env['OPENAI_API_KEY'];
         var request = new Request('https://api.openai.com/v1/chat/completions', {
     method: 'POST', 
     mode: 'cors', 
