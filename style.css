@@ -256,6 +256,10 @@ h1{
     }
   }
 
+#aurora_gif{
+    zoom: 1.25;
+}
+
 #text{
     text-align: justify;
     padding: 10px;
