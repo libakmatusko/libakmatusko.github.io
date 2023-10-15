@@ -6,7 +6,7 @@ const filename = url.substring(url.lastIndexOf('/') + 1);
 //detenv.config();
 //const apiKey = process.env.API_KEY;
 
-const apiKey = $os.getenv(API_KEY);
+const apiKey = "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";
 
 // Get the form and attach an event listener
 const questionForm = document.getElementById("question_form");
