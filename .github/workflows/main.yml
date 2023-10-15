@@ -14,4 +14,4 @@ steps:
         run: yarn test --ci --silent --testPathIgnorePatterns=experimental
         env:
           CI: true
-          API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          API_KEY: ${{ secrets.API_KEY }}
