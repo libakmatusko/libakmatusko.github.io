@@ -1,54 +1,73 @@
-var url = window.location.pathname;
-var filename = url.substring(url.lastIndexOf('/')+1);
-//alert(filename);
+// Get the filename from the URL
+const url = window.location.pathname;
+const filename = url.substring(url.lastIndexOf('/') + 1);
 
-let questionForm = document.getElementById("question_form");
-questionForm.addEventListener("submit", (e) =>  {
+const dotenv = require('dotenv')
+detenv.config();
+const apiKey = process.env.API_KEY;
+
+// Get the form and attach an event listener
+const questionForm = document.getElementById("question_form");
+questionForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    var question = document.getElementById("question");
-    if (question.value != "tu napíš svoju otázku") {
-        //tu sa podla stranky dopise pre otazku o akej je teme
-        switch(filename) {
+    // Get the user's question input
+    const questionInput = document.getElementById("question");
+
+    // Check if the user input is not the default placeholder
+    if (questionInput.value !== "tu napíš svoju otázku") {
+        // Append topic based on the current page
+        switch (filename) {
             case "pythagoras.html":
-                question.value = "Mám otáazku ohľadom pytagorovho trojuholníka: " + question.value
+                questionInput.value = `Mám otázku ohľadom Pytagorovho trojuholníka: ${questionInput.value}`;
                 break;
             case "icosahedron.html":
-                question.value = "Mám otáazku ohľadom Ikosahedronu: " + question.value
+                questionInput.value = `Mám otázku ohľadom Ikosahedronu: ${questionInput.value}`;
                 break;
             case "tetrahedron.html":
-                question.value = "Mám otáazku ohľadom Tetrahedronu: " + question.value
+                questionInput.value = `Mám otázku ohľadom Tetrahedronu: ${questionInput.value}`;
                 break;
+            case "aurora.html":
+                questionInput.value = `Mám otázku ohľadom polárnej žiary: ${questionInput.value}`;
+                break;
+            // Add more cases for other pages if needed
         }
-        // tu sa bude spracovavat request s API
-        const apiKey = "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";
+
+        // Prepare the request to the OpenAI API
+        const request = new Request('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            mode: 'cors',
+            redirect: 'follow',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            }),
+            body: JSON.stringify({
+                "model": "gpt-3.5-turbo",
+                "messages": [{ "role": "user", "content": questionInput.value }],
+                "temperature": 0.7,
+            }),
+        });
         console.log('OpenAI API Key:', apiKey);
-        var request = new Request('https://api.openai.com/v1/chat/completions', {
-    method: 'POST', 
-    mode: 'cors', 
-    redirect: 'follow',
-    headers: new Headers({
-        'Content-Type': 'application/json',
-    "Authorization": apiKey
-    }),
-  body: JSON.stringify({
-"model": "gpt-3.5-turbo",
-"messages": [{"role": "user", "content": question.value}],
-"temperature": 0.7
-   })
-});
-fetch(request).then(function(response) { 
-    // Convert to JSON
-    return response.json();
-}).then(function(j) {
-    // Yay, j is a JavaScript object
-    console.log(j)
-    answer = j["choices"][0]["message"]["content"]
-        //question je vstup
-        console.log(question.value)
-        //answer buder vystup.
-        console.log(answer)
-        document.getElementById("answer").innerText = answer;
-});
+        console.log('OpenAI API Key:', apiKey);
+        console.log('API Request:', request);
+
+        try {
+            // Make the API request and handle the response
+            console.log("djaojdasd")
+            const response = await fetch(request);
+            console.log("djaojdasd")
+            console.log(response);
+            const jsonResponse = await response.json();
+            console.log(jsonResponse)
+            const answer = jsonResponse.choices[0].message.content;
+
+            // Log the input, output, and display the answer
+            console.log(questionInput.value);
+            console.log(answer);
+            document.getElementById("answer").innerText = answer;
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
-})
+});
