@@ -2,9 +2,11 @@
 const url = window.location.pathname;
 const filename = url.substring(url.lastIndexOf('/') + 1);
 
-const dotenv = require('dotenv')
-detenv.config();
-const apiKey = process.env.API_KEY;
+//const dotenv = require('dotenv')
+//detenv.config();
+//const apiKey = process.env.API_KEY;
+
+const apiKey = process.env.API_KEY
 
 // Get the form and attach an event listener
 const questionForm = document.getElementById("question_form");
@@ -48,7 +50,6 @@ questionForm.addEventListener("submit", async (e) => {
                 "temperature": 0.7,
             }),
         });
-        console.log('OpenAI API Key:', apiKey);
         console.log('OpenAI API Key:', apiKey);
         console.log('API Request:', request);
 
