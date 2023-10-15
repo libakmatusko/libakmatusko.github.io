@@ -6,7 +6,7 @@ const filename = url.substring(url.lastIndexOf('/') + 1);
 //detenv.config();
 //const apiKey = process.env.API_KEY;
 
-const apiKey = "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";
+const apiKey = "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";
 
 // Get the form and attach an event listener
 const questionForm = document.getElementById("question_form");
@@ -50,14 +50,12 @@ questionForm.addEventListener("submit", async (e) => {
                 "temperature": 0.7,
             }),
         });
-        console.log('OpenAI API Key:', apiKey);
+
         console.log('API Request:', request);
 
         try {
             // Make the API request and handle the response
-            console.log("djaojdasd")
             const response = await fetch(request);
-            console.log("djaojdasd")
             console.log(response);
             const jsonResponse = await response.json();
             console.log(jsonResponse)
