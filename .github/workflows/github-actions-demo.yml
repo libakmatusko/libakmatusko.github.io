@@ -1,4 +1,4 @@
-name: Workflows with large secrets
+name: Workflows with secrets
 
 on: push
 
