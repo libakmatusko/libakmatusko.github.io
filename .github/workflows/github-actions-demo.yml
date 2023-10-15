@@ -4,7 +4,11 @@ on: push
 
 jobs:
   my-job:
-    name: My Job
     runs-on: ubuntu-latest
     env:
-        super_secret: ${{ secrets.API_KEY }}
+        API_KEY: ${{ secrets.API_KEY }}
+    steps:
+        - name: read secret
+          run: echo "key id ${{ secrets.API_KEY }}"
+        - name: read secret
+          run: echo "variable id ${{ env.API_KEY }}"
