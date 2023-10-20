@@ -26,7 +26,7 @@ a:hover {
 
 
 body{
-    background-color: rgb(207, 207, 194);
+    background-color: rgb(225, 225, 225);
     margin: 0px;
     box-sizing: border-box;
     font-family: Didot, serif;
@@ -35,19 +35,17 @@ body{
     align-content: center;
 }
 th{
-    background-color: antiquewhite;
-    border-collapse: collapse;
-    border: 2px solid black;
+    background-color: rgb(227, 13, 52);
     padding: 15px;
+    border-radius: 31px;
 }
 th:active{
-    background-color: white;
+    background-color: rgb(191, 48, 107);
+    border-radius: 10px;
 }
 table{
     width: 100%;
     height: 100%;
-    border-collapse: collapse;
-    border: 3px solid black;
     font-size: 24px;
 }
 h1{
