@@ -8,11 +8,11 @@ a:link {
   text-decoration: none;
   color: rgb(130, 1, 1); 
 }
-a:visited { 
-  text-decoration: none;
+a:visited {
+    color: rgb(130, 1, 1);
  }
-a:hover { text-decoration: none; 
-  text-decoration: none;
+a:hover {
+    text-decoration: none;
   transition: color .9s;
   color: rgb(0, 128, 98);
 }
@@ -27,7 +27,7 @@ a:hover {
 
 
   body{
-    background-color: rgb(238 219 183);
+    background-color: rgb(189, 189, 189);
     margin: 0px;
     box-sizing: border-box;
     font-family: Didot, serif;
@@ -36,23 +36,25 @@ a:hover {
     align-content: center;
 }
 th{
-    background-color: rgb(168 145 108);
+    background-color: rgb(131, 131, 131);
     padding: 15px;
     border-radius: 31px;
+    transition: background-color 1s;
 }
 th:active{
     background-color: rgb(123 96 61);
-    border-radius: 10px;
 }
 
 table{
-    width: 100%;
+    width: 90%;
     height: 100%;
     font-size: 24px;
 }
 
-td:hover{
-    background-color: #ff0000;
+th:hover{
+background-color: rgb(105, 105, 105);
+    transition: background-color .3s;
+
 }
 
     h1{
