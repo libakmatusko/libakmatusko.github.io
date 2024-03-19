@@ -2,11 +2,11 @@
 const url = window.location.pathname;
 const filename = url.substring(url.lastIndexOf('/') + 1);
 
-const dotenv = require('dotenv');
-detenv.config();
-const apiKey = process.env.API_KEY;
+//const dotenv = require('dotenv');
+//detenv.config();
+//const apiKey = process.env.API_KEY;
 
-//const apiKey = "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";
+const apiKey = "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";
 
 // Get the form and attach an event listener
 const questionForm = document.getElementById("question_form");
