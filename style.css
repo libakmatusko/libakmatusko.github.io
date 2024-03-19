@@ -337,3 +337,11 @@ background-color: rgb(105, 105, 105);
         zoom: 0.25;
     }
 
+.container {
+    max-width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
