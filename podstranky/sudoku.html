@@ -30,34 +30,53 @@
         </div>
         <h1>Sudoku riešitel</h1>
         <div class="solver">
-            <table>
+            <table class="sudokuTable">
                 <tr>
-                    <th><input type="number" min="0" max="9" value="0"></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                    <th class="sudokuCellTopLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTop"> <input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTopRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellTopLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTop"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTopRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellTopLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTop"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTopRight"><input type="number" min="0" max="9" value="0"></th>
                 </tr>
                 <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                    <th class="sudokuCellMidLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMid"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMidRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellMidLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMid"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMidRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellMidLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMid"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMidRight"><input type="number" min="0" max="9" value="0"></th>
                 </tr>
                 <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                    <th class="sudokuCellBotLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBot"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBotRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellBotLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBot"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBotRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellBotLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBot"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBotRight"><input type="number" min="0" max="9" value="0"></th>
                 </tr>
                 <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                    <th class="sudokuCellTopLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTop"> <input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTopRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellTopLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTop"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTopRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellTopLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTop"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTopRight"><input type="number" min="0" max="9" value="0"></th>
                 </tr>
                 <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                    <th class="sudokuCellMidLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMid"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMidRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellMidLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMid"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMidRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellMidLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMid"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMidRight"><input type="number" min="0" max="9" value="0"></th>
                 </tr>
                 <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                    <th class="sudokuCellBotLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBot"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBotRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellBotLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBot"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBotRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellBotLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBot"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBotRight"><input type="number" min="0" max="9" value="0"></th>
                 </tr>
                 <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                    <th class="sudokuCellTopLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTop"> <input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTopRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellTopLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTop"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTopRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellTopLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTop"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellTopRight"><input type="number" min="0" max="9" value="0"></th>
                 </tr>
                 <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                    <th class="sudokuCellMidLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMid"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMidRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellMidLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMid"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMidRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellMidLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMid"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellMidRight"><input type="number" min="0" max="9" value="0"></th>
                 </tr>
                 <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                    <th class="sudokuCellBotLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBot"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBotRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellBotLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBot"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBotRight"><input type="number" min="0" max="9" value="0"></th>
+                    <th class="sudokuCellBotLeft"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBot"><input type="number" min="0" max="9" value="0"></th><th class="sudokuCellBotRight"><input type="number" min="0" max="9" value="0"></th>
                 </tr>
+
             </table>
         </div>
         <div id="speach">
@@ -67,14 +86,7 @@
             </audio>
         </div>
         <div id="text">
-            <p>Pythagorov trojuholník je jeden zo základných konceptov v geometrii, ktorý odvodil staroveký grécky matematik Pythagoras. Každý pravouhlý trojuholník má špeciálnu vlastnosť, známu ako Pythagorova veta, ktorá hovorí, že v každom pravouhlom trojuholníku je obsah štvorca, ktorého jedna zo strán je prepona trojuholníka rovnaký súčtu obsahov štvorcov s dĺžkami strán odvesien.</p>
-            
-            <p>Matematicky to možno vyjadriť ako: a^2 + b^2 = c^2, kde "a" a "b" sú dĺžky odvesien a "c" je dĺžka hypotenuzy. Zároveň pytagorova veta je konkrétnym prípadom sínusovej vety: c^2 = a^2 + b^2 - 2*ab*cos(gama) kde gama je označuje veľkosť pravého uhla, teda cos(gama) = 0, čo nám zjednodušuje rovnicu na: c^2 = a^2 + b^2 - 0</p>
-            
-            <p>Dôkaz: fialový trojuholník má odvesny dĺžok "a", "b" a preponu dĺžky "c". Z toho graficky vidíme, že čierny štvorec má dĺžku strany "a+b", zatiaľ čo modrý má stranu dlhú "c". Teda obsah čierneho štvorca je (a+b)^2 = a^2 + 2ab + b^2,  zatiaľ čo obsah modrého je c^2. Ďalej vidíme, že čierny štvorec je tvorený modrým štvorcom  štyroma pôvodnými trojuholníkmi, teda musí platiť: a^2 + 2ab + b^2 = c^2 + 4*(ab)/2 => a^2 + 2ab + b^2 = c^2 + 2*ab => a^2 + b^2 = c^2, čo je celý dôkaz.  </p>
-
-            <p>Pythagorov trojuholník má mnoho praktických aplikácií, napríklad pri meraní vzdialeností, navigácii, stavebnom inžinierstve a trigonometrii. Je to jeden z najdôležitejších konceptov v matematike a jeho význam pre reálne svetové problémy je neoceniteľný.</p>
-        </div>
+            </div>
         <div id="ai_chat">
             <form id="question_form">
                 <label for="question_text">Real-time dotazník</label>

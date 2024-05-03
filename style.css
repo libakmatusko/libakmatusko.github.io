@@ -345,3 +345,206 @@ background-color: rgb(105, 105, 105);
     border: 1px solid #ccc;
     border-radius: 20px;
 }
+
+.sudokuTable{
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+}
+
+.sudokuTable th{
+    width: 50px;
+    height: 50px;
+}
+
+
+.sudokuCellTopLeft{
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    width:50px;
+    height:50px;
+    align-items: center;
+    font-size: 30px;
+    background-color: #f0f0f0;
+    border-radius: 0 0 0;
+}
+
+.sudokuCellTopLeft:active{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellTopLeft:hover{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellTop{
+    border-top: 2px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+    background-color: #f0f0f0;
+    border-radius: 0 0 0;
+}
+
+.sudokuCellTop:active{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellTop:hover{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellTopRight{
+    border-top: 2px solid black;
+    border-right: 2px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+    background-color: #f0f0f0;
+    border-radius: 0 0 0;
+}
+
+.sudokuCellTopRight:active{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellTopRight:hover{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellMidLeft{
+    border-top: 1px solid black;
+    border-left: 2px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+    background-color: #f0f0f0;
+    border-radius: 0 0 0;
+}
+
+.sudokuCellMidLeft:active{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellMidLeft:hover{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellMid{
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+    background-color: #f0f0f0;
+    border-radius: 0 0 0;
+}
+
+.sudokuCellMid:active{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellMid:hover{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellMidRight{
+    border-top: 1px solid black;
+    border-right: 2px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+    background-color: #f0f0f0;
+    border-radius: 0 0 0;
+}
+
+.sudokuCellMidRight:active{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellMidRight:hover{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellBotLeft{
+    border-top: 1px solid black;
+    border-left: 2px solid black;
+    border-right: 1px solid black;
+    border-bottom: 2px solid black;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+    background-color: #f0f0f0;
+    border-radius: 0 0 0;
+}
+
+.sudokuCellBotLeft:active{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellBotLeft:hover{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellBot{
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 2px solid black;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+    background-color: #f0f0f0;
+    border-radius: 0 0 0;
+}
+
+.sudokuCellBot:active{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellBot:hover{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellBotRight{
+    border-top: 1px solid black;
+    border-right: 2px solid black;
+    border-left: 1px solid black;
+    border-bottom: 2px solid black;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+    background-color: #f0f0f0;
+    border-radius: 0 0 0;
+}
+
+.sudokuCellBotRight:active{
+    background-color: #f0f0f0;
+}
+
+.sudokuCellBotRight:hover{
+    background-color: #f0f0f0;
+}
+
