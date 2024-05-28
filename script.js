@@ -83,9 +83,9 @@ document.getElementById("solve-button").addEventListener("click", function() {
         table.push(rowValues);
     }
     console.log("Sending the following Sudoku to the server:");
-    for (var i = 0; i < table.length; i++) {
-        console.log(table[i])
-    }
+    //for (var i = 0; i < table.length; i++) {
+    //    console.log(table[i])
+    //}
     fetch(`http://167.99.139.121:5000/solve/123`, {
         method: 'POST',
         headers: {
