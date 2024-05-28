@@ -36,13 +36,19 @@ a:hover {
     align-content: center;
 }
 th{
-    background-color: rgb(131, 131, 131);
+    /*background-color: rgb(131, 131, 131);*/
+    background: linear-gradient(135deg, #bad8ee, #8c8c9b);
     padding: 15px;
+
     border-radius: 31px;
-    transition: background-color 1s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 th:active{
-    background-color: rgb(123 96 61);
+    background-color: rgb(105, 105, 105);
+}
+
+th:hover{
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 table{
@@ -585,4 +591,30 @@ background-color: rgb(105, 105, 105);
 .grid-item img {
     max-width: 100%;
     height: auto;
+}
+
+#solve-button {
+    background: linear-gradient(135deg, #bad8ee, #8c8c9b);
+    border: none;
+    border-radius: 25px;
+    color: #000000;
+    cursor: pointer;
+    font-size: 25px;
+    font-family: inherit;
+    margin: 10px;
+    padding: 15px 20px;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#solve-button:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+
+}
+
+#solve-button:active {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
 }
