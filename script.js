@@ -71,10 +71,42 @@ questionForm.addEventListener("submit", async (e) => {
     }
 });
 
-// JavaScript to allow only numeric input
-    document.querySelectorAll('.sudokuTable td').forEach(function(input) {
-    input.addEventListener('input', function () {
-        this.value = this.value.replace(/\D/g, ''); // Replace any non-numeric character with an empty string
-    });
-});
 
+document.getElementById("solve-button").addEventListener("click", function() {
+    const table = [];
+    for (let row = 0; row < 9; row++) {
+        const rowValues = [];
+        for (let col = 0; col < 9; col++) {
+            const cellValue = document.getElementById(`cell-${row+1}-${col+1}`).value;
+            rowValues.push(cellValue === "" ? 0 : parseInt(cellValue));
+        }
+        table.push(rowValues);
+    }
+    console.log("Sending the following Sudoku to the server:");
+    for (var i = 0; i < table.length; i++) {
+        console.log(table[i])
+    }
+    fetch(`http://167.99.139.121:5000/solve/123`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({table}),
+    })
+        .then(response => response.json())
+        .then(data => {
+            const solved = data.solved;
+            if (solved && solved.length > 0) {
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        document.getElementById(`cell-${row+1}-${col+1}`).value = solved[row][col];
+                    }
+                }
+            } else {
+                alert("Sudoku couldn't be solved.");
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+});
