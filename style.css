@@ -353,9 +353,26 @@ background-color: rgb(105, 105, 105);
     height: 100%;
 }
 
-.sudokuTable th{
-    width: 50px;
-    height: 50px;
+.sudokuTable td{
+    width: 50px; /* Set the desired width */
+    padding-bottom: 50px; /* Set the height as a percentage of the width */
+    position: relative;
+    align-items: center;
+}
+
+.sudokuTable input{
+    width: 80%;
+    height: 80%;
+    font-size: 30px;
+    text-align: center;
+    align-items: center;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 0;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+
 }
 
 
