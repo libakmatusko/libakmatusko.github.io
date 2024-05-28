@@ -46,7 +46,7 @@ questionForm.addEventListener("submit", async (e) => {
             }),
             body: JSON.stringify({
                 "model": "gpt-3.5-turbo",
-                "messages": [{ "role": "user", "content": questionInput.value }],
+                "messages": [{"role": "user", "content": questionInput.value}],
                 "temperature": 0.7,
             }),
         });
@@ -70,3 +70,11 @@ questionForm.addEventListener("submit", async (e) => {
         }
     }
 });
+
+// JavaScript to allow only numeric input
+    document.querySelectorAll('.sudokuTable td').forEach(function(input) {
+    input.addEventListener('input', function () {
+        this.value = this.value.replace(/\D/g, ''); // Replace any non-numeric character with an empty string
+    });
+});
+
