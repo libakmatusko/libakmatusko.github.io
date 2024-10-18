@@ -52,9 +52,20 @@ def get_users():
 def add_user():
     new_user = request.json
     users = load_users()
-    users.append(new_user)
-    write_users(users)
-    return jsonify(new_user), 201
+    for u in users:
+        if u['name'] == new_user['name']:
+            break
+    else:
+        users.append(new_user)
+        write_users(users)
+        return {
+            "status": "fail",
+            "message": "username already exists"
+        } 
+    return {
+        "status": "succes",
+        "message": "user added"
+    } 
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():

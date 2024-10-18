@@ -55,8 +55,7 @@ document.getElementById('registerBtn').addEventListener('click', function() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log("Response from server:", data);
-        // Handle successful registration (e.g., redirect to dashboard)
+        alert(data.message);
         window.location.href = "dashboard.html"; // Change as needed
     })
     .catch(error => {
