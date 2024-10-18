@@ -121,3 +121,25 @@ button {
 #backToSubmitBtn:hover {
     background-color: darkorange;
 }
+
+/* Apply this to the container holding the teams */
+#dashboard {
+    max-height: 500px; /* Set the maximum height for the visible part */
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
+    border: 1px solid #ccc; /* Optional: add a border to visualize the container */
+    padding: 10px; /* Optional: some padding for better layout */
+}
+
+/* Optional: Style the scrollbar (WebKit browsers like Chrome, Safari) */
+#dashboard::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+#dashboard::-webkit-scrollbar-thumb {
+    background-color: #888; /* Color of the scrollbar thumb */
+    border-radius: 10px; /* Optional: make the scrollbar thumb rounded */
+}
+
+#dashboard::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Darker color when hovered */
+}
