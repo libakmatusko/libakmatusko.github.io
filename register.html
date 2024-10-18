@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventný OMAR - Registrácia</title>
+    <link rel="icon" type="image/webp" href="favicon.webp">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="registerForm">
+        <h2>Registrácia Tímu</h2>
+        <input type="text" id="teamName" placeholder="Názov Tímu" required>
+        <input type="password" id="password" placeholder="Heslo" required>
+        
+        <div id="memberInputs">
+            <div class="member-input">
+                <input type="text" placeholder="Člen 1" required>
+                <button class="removeMemberBtn" style="display: none;">Odstrániť</button>
+            </div>
+        </div>
+        <button id="addMemberBtn">Pridať Člena</button>
+        
+        <button id="registerBtn">Registrácia</button>
+    </div>
+
+    <script src="register.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Late Submission - Adventný OMAR</title>
+    <link rel="icon" type="image/webp" href="favicon.webp">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Late Submission</h2>
+
+    <!-- Answer input -->
+    <label for="lateAnswer">Submit your answer:</label>
+    <input type="text" id="lateAnswer" placeholder="Your answer" required>
+
+    <!-- Day selection -->
+    <label for="daySelect">Select Day:</label>
+    <select id="daySelect">
+        <!-- Options will be populated via JavaScript -->
+    </select>
+
+    <!-- Submit button -->
+    <button id="submitLateAnswerBtn" class="button">Submit Answer</button>
+
+    <!-- Download button -->
+    <button id="downloadLateProblemBtn" class="button" style="margin-top: 20px;">Download Problem from Selected Day</button>
+
+    <!-- Button to go back to the submit page -->
+    <button onclick="window.location.href='problem.html'" class="button" style="margin-top: 20px;" id="backToSubmitBtn">Back to Submit Page</button>
+</div>
+
+<script src="late_submit.js"></script>
+   
+</body>
+</html>

@@ -2,103 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Všetky projekty</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMOROV týždeň</title>
+    <link rel="icon" type="image/webp" href="favicon.webp">
     <link rel="stylesheet" href="style.css">
 </head>
-    <body>
-    <div class='container'>
-            <div id="PC-bar">
-                <table>
-                    <tr>
-                        <th width="33.33%" onclick="location.href='/index.html'">VŠETKY PROJEKTY</th>
-                        <th width="33.33%" onclick="location.href='/how_it_works.html'">AKO TO FUNGUJE</th>
-                        <th width="33.33%" onclick="location.href='/about_us.html'">MY A NAŠA PRÁCA</th>
-                    </tr>
-                </table>
-            </div>
-            <div id="mobile-bar">
-                <table>
-                    <tr>
-                        <th width="100%" onclick="location.href='/index.html'">VŠETKY PROJEKTY</th>
-                    </tr>
-                    <tr>
-                        <th width="100%" onclick="location.href='/how_it_works.html'">AKO TO FUNGUJE</th>
-                    </tr>
-                    <tr>
-                        <th width="100%" onclick="location.href='/about_us.html'">MY A NAŠA PRÁCA</th>
-                    </tr>
-                </table>
-            </div>
-            <h1>Toto sú všetky naše doteraz vytvorené projekty:</h1>
-            <div id="projekty">
-                <p>Našimi projektami sa snažíme žiakom približovať zaujímavé informácie a to formou, ktorá je moderná a jednoduchá.</p>
-                <table>
-                  <tr>
-                      <th onclick="location.href='podstranky/pythagoras.html'">
-                          Pytagorov trojuholník
-                          <div class="projekt animation">
-                              <div class="pyt-triangle"></div>
-                              <div class="pyt-square_c"></div>
-                              <div class="pyt-square_ab"></div>
-                          </div>
-                      </th>
-                      <th onclick="location.href='podstranky/tetrahedron.html'">
-                          Pravidelný štvorsten / tetrahedron
-                          <div class="projekt animation">
-                              <div class='polyhedron tetrahedron'>
-                                  <div class='sidet triangle'></div>
-                                  <div class='sidet triangle'></div>
-                                  <div class='sidet triangle'></div>
-                                  <div class='sidet triangle'></div>
-                              </div>
-                          </div>
-                  </tr>
-                    <tr>
-                        <th onclick="location.href='podstranky/icosahedron.html'">
-                        Pravidelný dvadsťsten / icosahedron
-                        <div class="projekt animation">
-                            <div class="solid">
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
+<body>
+    <div class="container">
+        <h2>Welcome to the Portal</h2>
+        <button id="registerBtn">Register</button>
+        <button id="loginBtn">Log In</button>
+        <button id="downloadProblemBtn">Stiahnuť pravidla</button>
+        <button id="dashboardBtn">Výledkovka</button>
+    </div>
 
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-                                <div class="side"></div>
-                            </div>
-                        </div>
-                        </th>
-                        <th onclick="location.href='podstranky/aurora.html'">
-                            Polárna žiara
-                            <div class="projekt animation">
-                                <img src="podstranky/súbory/How_The_Northern_Lights_Are_Created_VIDEO.gif" alt="Aurora_gif" style="width:720px;height:404px;" id="aurora_gif">
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th onclick="location.href='podstranky/escaperoom.html'"> Escape Room </th>
-                        <th onclick="location.href='podstranky/sudoku.html'"> Vyriešim ti sudoku</th>
-                    </tr>
-                </table>
-                </div>
-        </div>
-
-    </body>
-
+    <script>
+        document.getElementById('registerBtn').addEventListener('click', function() {
+            window.location.href = 'register.html';
+        });
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            window.location.href = 'login.html';
+        });
+        document.getElementById('dashboardBtn').addEventListener('click', function() {
+            window.location.href = 'dashboard.html';
+        });
+        document.getElementById('downloadProblemBtn').addEventListener('click', function() {
+            const filePath = `problems/rules.pdf`;
+            const link = document.createElement('a');
+            link.href = filePath;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
+</body>
 </html>

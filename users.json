@@ -1,0 +1,89 @@
+[
+    {
+        "name": "John Doe",
+        "password": "idk",
+        "members": [
+            "abc",
+            "def",
+            "ghi"
+        ],
+        "scores": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "time": 0.0,
+        "wrong_answers": 0
+    },
+    {
+        "name": "a",
+        "password": "a",
+        "members": [
+            "velikan"
+        ],
+        "scores": [
+            5,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "time": 17211.322628,
+        "wrong_answers": 7
+    },
+    {
+        "name": "abc",
+        "password": "aaa",
+        "members": [
+            "jo\u017eko"
+        ],
+        "scores": [
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "time": 17457.641066,
+        "wrong_answers": 1
+    },
+    {
+        "name": "b",
+        "password": "b",
+        "members": [
+            "jaja",
+            "ja"
+        ],
+        "scores": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "time": 0,
+        "wrong_answers": 0
+    }
+]

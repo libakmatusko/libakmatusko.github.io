@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Page - Adventný OMAR</title>
+    <link rel="icon" type="image/webp" href="favicon.webp">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Problem for Day <span id="selectedDayDisplay"></span></h2>
+
+    <!-- Display or handle the problem here -->
+    <button id="downloadProblemBtn" class="button">Stiahnuť Problém Dňa</button>
+
+    <!-- Answer input (if needed) -->
+    <label for="answerInput">Submit your answer:</label>
+    <input type="text" id="answerInput" placeholder="Your answer" required>
+
+    <!-- Submit button -->
+    <button id="submitAnswerBtn" class="button">Submit Answer</button>
+
+    <button id="goToLateSubmitBtn">Late Submit</button>
+
+    <!-- Button to go back to the dashboard -->
+    <button onclick="window.location.href='dashboard.html'" class="button" style="margin-top: 20px;" id="dashboardBtn">Back to Dashboard</button>
+</div>
+
+    <script src="problem.js"></script>
+</body>
+</html>

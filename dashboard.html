@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="icon" type="image/webp" href="favicon.webp">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Team Rankings</h2>
+        <table id="teamsTable">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team Name</th>
+                    <th>Score</th>
+                    <th>Completion Time</th>
+                    <th>Wrong Answers</th>
+                </tr>
+            </thead>
+            <tbody id="teamsTableBody">
+                <!-- Data will be dynamically inserted here -->
+            </tbody>
+        </table>
+        <button id="backToIndexBtn">Návrat na Úvodnú Stránku</button>
+    </div>
+
+    <script>
+        document.getElementById('backToIndexBtn').addEventListener('click', function() {
+            window.location.href = 'index.html';
+        });
+        function formatTime(seconds) {
+            // Calculate the time components
+            const days = Math.floor(seconds / (24 * 3600));
+            seconds %= (24 * 3600);
+            const hours = Math.floor(seconds / 3600);
+            seconds %= 3600;
+            const minutes = Math.floor(seconds / 60);
+            seconds = Math.floor(seconds % 60); // Remaining seconds
+
+            // Create the formatted string
+            let timeString = '';
+            if (days > 0) {
+                timeString += days + 'd ';
+            }
+            if (hours > 0) {
+                timeString += hours + 'h ';
+            }
+            if (minutes > 0) {
+                timeString += minutes + 'm ';
+            }
+            timeString += seconds + 's';
+
+            return timeString;
+        }
+
+        // Fetch teams data from the Python API and populate the table
+        fetch('https://matuslibak.pythonanywhere.com/dashboard') // Adjusted URL to point to the Python API
+            .then(response => response.json())
+            .then(teams => {
+                const tableBody = document.getElementById('teamsTableBody');
+                tableBody.innerHTML = ''; // Clear the table first
+
+                teams.forEach((team, index) => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${team.name}</td>
+                        <td>${team.score}</td>
+                        <td>${formatTime(team.time)}</td>
+                        <td>${team.wrong_answers}</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching team data:', error);
+            });
+    </script>
+</body>
+</html>
