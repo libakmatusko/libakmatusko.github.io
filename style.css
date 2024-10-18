@@ -19,26 +19,34 @@ body {
     overflow: auto;
     text-align: center; /* Center content */
 }
-/* Apply this to the container holding the teams */
-#dashboard {
-    max-height: 500px; /* Set the maximum height for the visible part */
-    overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
-    border: 1px solid #ccc; /* Optional: add a border to visualize the container */
-    padding: 10px; /* Optional: some padding for better layout */
+
+/* Make tbody scrollable */
+#teamsTableBody {
+    display: block;
+    max-height: 400px; /* Set the max height for tbody to make it scrollable */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
-/* Optional: Style the scrollbar (WebKit browsers like Chrome, Safari) */
-#dashboard::-webkit-scrollbar {
-    width: 8px; /* Width of the scrollbar */
+/* Ensure the table layout remains fixed */
+table {
+    width: 100%; /* Ensure the table takes up full width */
+    border-collapse: collapse; /* Make sure borders behave properly */
 }
 
-#dashboard::-webkit-scrollbar-thumb {
-    background-color: #888; /* Color of the scrollbar thumb */
-    border-radius: 10px; /* Optional: make the scrollbar thumb rounded */
+thead, tbody tr {
+    display: table;
+    width: 100%; /* Set width to 100% to align headers with body */
+    table-layout: fixed; /* Fix table layout */
 }
 
-#dashboard::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Darker color when hovered */
+/* Ensure thead (header) remains fixed at the top */
+thead {
+    width: calc(100% - 1em); /* Adjust for scrollbar width */
+    background-color: #f1f1f1; /* Optional: Background color for the header */
+}
+
+tbody {
+    width: 100%;
 }
 
 .member-input {
