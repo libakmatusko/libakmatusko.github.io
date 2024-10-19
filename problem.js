@@ -56,7 +56,7 @@ if (loggedInTeam) {
     // Event listener for downloading the problem of the current day
     document.getElementById('downloadProblemBtn').addEventListener('click', function() {
         const competitionDay = getCompetitionDay(); // Get the current competition day
-        const fileName = `problem_${competitionDay}.pdf`; // Modify the extension based on your file type
+        const fileName = `hint_${competitionDay}.pdf`; // Modify the extension based on your file type
         const filePath = `problems/${fileName}`; // Path to the file in the problems folder
 
         // Create an anchor element to trigger the download
