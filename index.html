@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Your Location (Active User)</title>
+    <style>
+        #location-form {
+            margin: 20px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Update Your Location</h2>
+
+    <form id="location-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required><br>
+        <button type="button" onclick="startLocationUpdates()">Start Updating Location</button>
+    </form>
+
+    <script>
+        let activeInterval = null;
+        let backgroundInterval = null;
+        let isPageHidden = false;
+        let isPingInProgress = false; // Prevent concurrent pings
+
+        // Get the user's current location with maximum accuracy
+        function getCurrentLocation() {
+            return new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        resolve({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                        });
+                    },
+                    (error) => {
+                        console.error('Error fetching location:', error);
+                        reject(error);
+                    },
+                    { enableHighAccuracy: true } // Use maximum accuracy
+                );
+            });
+        }
+
+        // Send location data to the server
+        function sendLocation(username, latitude, longitude) {
+            if (isPingInProgress) return; // Skip if a ping is already in progress
+            isPingInProgress = true;
+
+            const data = {
+                username: username,
+                latitude: latitude,
+                longitude: longitude,
+            };
+
+            fetch('https://matuslibak.pythonanywhere.com/update_location', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('Server response:', data.message);
+                })
+                .catch((error) => {
+                    console.error('Error sending location:', error);
+                })
+                .finally(() => {
+                    isPingInProgress = false; // Reset the flag after completion
+                });
+        }
+
+        // Periodically update the location
+        function updateLocationPeriodically(interval) {
+            const username = document.getElementById('username').value;
+            if (!username) {
+                alert('Please enter a username.');
+                return null;
+            }
+
+            return setInterval(async () => {
+                try {
+                    const position = await getCurrentLocation();
+                    sendLocation(username, position.latitude, position.longitude);
+                } catch (error) {
+                    console.error('Error updating location:', error);
+                }
+            }, interval);
+        }
+
+        // Start updating location
+        function startLocationUpdates() {
+            const username = document.getElementById('username').value;
+            if (!username) {
+                alert('Please enter a username.');
+                return;
+            }
+
+            // Clear existing intervals
+            if (activeInterval) clearInterval(activeInterval);
+            if (backgroundInterval) clearInterval(backgroundInterval);
+
+            // Start active updates (every 20 seconds)
+            activeInterval = updateLocationPeriodically(5000);
+
+            // Listen for visibility changes
+            document.addEventListener('visibilitychange', async () => {
+                if (document.hidden) {
+                    // Page minimized
+                    clearInterval(activeInterval); // Stop active updates
+                    backgroundInterval = updateLocationPeriodically(15 * 60 * 1000); // Every 15 minutes
+                    isPageHidden = true;
+                } else {
+                    // Page active
+                    if (isPageHidden) {
+                        clearInterval(backgroundInterval); // Stop background updates
+                        isPageHidden = false;
+
+                        try {
+                            // Perform a single immediate ping
+                            const position = await getCurrentLocation();
+                            sendLocation(username, position.latitude, position.longitude);
+                        } catch (error) {
+                            console.error('Error during activation ping:', error);
+                        }
+
+                        // Resume active updates
+                        activeInterval = updateLocationPeriodically(5000);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
