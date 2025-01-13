@@ -103,7 +103,13 @@
                 alert('Please enter a username.');
                 return;
             }
-
+            try {
+                // Perform a single immediate ping
+                const position = getCurrentLocation();
+                sendLocation(username, position.latitude, position.longitude);
+            } catch (error) {
+                console.error('Error during activation ping:', error);
+            }
             // Clear existing intervals
             if (activeInterval) clearInterval(activeInterval);
             if (backgroundInterval) clearInterval(backgroundInterval);
