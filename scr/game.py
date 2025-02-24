@@ -1,6 +1,7 @@
 import pygame
 import asyncio
 import sys
+from platform import Platform
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 1280
@@ -23,6 +24,9 @@ class Game:
         self.clock = pygame.time.Clock()
         self.player_pos = [SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2]
         self.vertical_v = 0 #vertical veliocity for jumping and falling + for down, - for up
+
+        self.platforms = pygame.sprite.Group()
+        self.platforms.add(Platform(50, 100, 100))
 
     async def run(self):
         while True:
@@ -55,4 +59,5 @@ class Game:
     def draw(self):
         self.screen.fill(BACKGROUND_COLOR)  # Fill the background
         pygame.draw.rect(self.screen, PLAYER_COLOR, (*[x*self.s_f for x in self.player_pos], PLAYER_SIZE*self.s_f, PLAYER_SIZE*self.s_f))  # Draw player
+        self.platforms.draw(self.screen)
         pygame.display.flip()  # Update the display
