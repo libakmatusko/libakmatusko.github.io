@@ -1,17 +1,28 @@
-# player.py
 import pygame
 import asyncio
-from utils import load_image
 
 class Player(pygame.sprite.Sprite):
-    async def init(self, x, y):
+    def __init__(self, x, y):
         super().__init__()
-        self.image = await load_image("assets/player.png")
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.speed = 5
+        self.image = pygame.Surface((50, 50))  # Rectangle shape
+        self.image.fill((0, 0, 255))
+        self.rect = self.image.get_rect(center=(x, y))
+        self.vertical_v = 0 #vertical veliocity for jumping and falling + for down, - for up
 
-    def update(self, keys):
+    def update(self, keys, platforms) -> int: #return how much to scroll
         if keys[pygame.K_LEFT]:
-            self.rect.x -= self.speed
+            self.rect.x -= 5
         if keys[pygame.K_RIGHT]:
-            self.rect.x += self.speed
+            self.rect.x += 5
+        self.rect.y += self.vertical_v
+        scroll = 0
+        if self.rect.y < 400:
+            scroll = 400 - self.rect.y
+            self.rect.y += scroll
+        self.vertical_v += 1
+        if self.vertical_v > 0:
+            for platform in platforms:
+                if platform.rect.clipline(self.rect.bottomleft, self.rect.bottomright):
+                    self.vertical_v = -25
+                    break
+        return scroll

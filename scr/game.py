@@ -2,6 +2,8 @@ import pygame
 import asyncio
 import sys
 from platform import Platform
+from player import Player
+import random
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 1280
@@ -20,13 +22,28 @@ class Game:
         screen_height = info.current_h  # Get the current height
         self.s_f = min(screen_height/SCREEN_HEIGHT, screen_width/SCREEN_WIDTH) * 0.90 #only in rendering
 
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f), pygame.RESIZABLE)
+        pygame.display.set_caption("Scaled Game Window")
+        self.internal_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+
         self.clock = pygame.time.Clock()
-        self.player_pos = [SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2]
-        self.vertical_v = 0 #vertical veliocity for jumping and falling + for down, - for up
+
+        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+        self.objects = pygame.sprite.Group()
+        self.objects.add(self.player)
 
         self.platforms = pygame.sprite.Group()
-        self.platforms.add(Platform(50, 100, 100))
+        base = Platform(719, 0, 1260, 1)
+        self.objects.add(base)
+        self.platforms.add(base)
+
+        self.score = 0
+
+
+        for i in range(30):
+            base = Platform(219, random.randint(0, 200), 1260-200*i, 301)
+            self.objects.add(base)
+            self.platforms.add(base)
 
     async def run(self):
         while True:
@@ -34,6 +51,8 @@ class Game:
             await self.update()
             self.draw()
             self.clock.tick(FPS)
+
+            print(self.platforms)
 
     async def handle_events(self):
         for event in pygame.event.get():
@@ -43,21 +62,15 @@ class Game:
 
     async def update(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            self.player_pos[0] -= PLAYER_SPEED
-        if keys[pygame.K_RIGHT]:
-            self.player_pos[0] += PLAYER_SPEED
-        self.player_pos[1] += self.vertical_v
-        self.vertical_v += 1
-        if self.player_pos[1] >= SCREEN_HEIGHT - PLAYER_SIZE:
-            self.vertical_v = -30
-
-        # Keep player within screen bounds
-        self.player_pos[0] = max(0, min(SCREEN_WIDTH - PLAYER_SIZE, self.player_pos[0]))
-        self.player_pos[1] = max(0, min(SCREEN_HEIGHT - PLAYER_SIZE, self.player_pos[1]))
+        scroll = self.player.update(keys=keys, platforms=self.platforms)  
+        self.platforms.update(scroll_lenght=scroll, s_height=SCREEN_HEIGHT)
+        self.score += scroll
+        if self.player.rect.y > SCREEN_HEIGHT:
+            self.player.kill() #dat koniec hry
 
     def draw(self):
-        self.screen.fill(BACKGROUND_COLOR)  # Fill the background
-        pygame.draw.rect(self.screen, PLAYER_COLOR, (*[x*self.s_f for x in self.player_pos], PLAYER_SIZE*self.s_f, PLAYER_SIZE*self.s_f))  # Draw player
-        self.platforms.draw(self.screen)
+        self.internal_surface.fill(BACKGROUND_COLOR)  # Fill the background
+        self.objects.draw(self.internal_surface)
+        scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
+        self.screen.blit(scaled_surface, (0, 0))
         pygame.display.flip()  # Update the display
