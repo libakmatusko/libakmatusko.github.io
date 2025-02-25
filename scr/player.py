@@ -20,9 +20,11 @@ class Player(pygame.sprite.Sprite):
             scroll = 400 - self.rect.y
             self.rect.y += scroll
         self.vertical_v += 1
+
         if self.vertical_v > 0:
             for platform in platforms:
-                if platform.rect.clipline(self.rect.bottomleft, self.rect.bottomright):
+                if pygame.sprite.collide_rect(platform, self):
+                    self.rect.y = platform.rect.y - self.rect.height
                     self.vertical_v = -25
                     break
         return scroll

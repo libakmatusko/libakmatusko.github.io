@@ -1,7 +1,7 @@
 import pygame
 import asyncio
 import sys
-from platform import Platform
+from platform import Platform, Platforms
 from player import Player
 import random
 
@@ -32,18 +32,11 @@ class Game:
         self.objects = pygame.sprite.Group()
         self.objects.add(self.player)
 
-        self.platforms = pygame.sprite.Group()
+        self.platforms = Platforms(s_width=SCREEN_WIDTH)
         base = Platform(719, 0, 1260, 1)
-        self.objects.add(base)
         self.platforms.add(base)
 
         self.score = 0
-
-
-        for i in range(30):
-            base = Platform(219, random.randint(0, 200), 1260-200*i, 301)
-            self.objects.add(base)
-            self.platforms.add(base)
 
     async def run(self):
         while True:
@@ -70,7 +63,10 @@ class Game:
 
     def draw(self):
         self.internal_surface.fill(BACKGROUND_COLOR)  # Fill the background
+
+        self.platforms.draw(self.internal_surface)
         self.objects.draw(self.internal_surface)
+
         scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
         self.screen.blit(scaled_surface, (0, 0))
         pygame.display.flip()  # Update the display

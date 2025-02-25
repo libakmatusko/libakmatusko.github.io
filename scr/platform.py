@@ -1,5 +1,12 @@
 import pygame
+import random
 import asyncio
+
+class Platforms(pygame.sprite.Group):
+    def __init__(self, s_width:int=720):
+        super().__init__()
+        for i in range(10):
+            self.add(Platform(150, random.randint(0, s_width-450), i*200, 300))
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, width, x, y, range):
@@ -11,7 +18,7 @@ class Platform(pygame.sprite.Sprite):
         self.pos = 0
 
 
-    def update(self, scroll_lenght:int=0, s_height:int=2000):
+    def update(self, scroll_lenght:int=0, s_height:int=128):
         self.rect.y += scroll_lenght
         if self.rect.y > s_height:
             self.kill()
