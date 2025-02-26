@@ -10,6 +10,8 @@ class Player(pygame.sprite.Sprite):
         self.vertical_v = 0 #vertical veliocity for jumping and falling + for down, - for up
 
     def update(self, keys, platforms) -> int: #return how much to scroll
+        JUMP_STRENGHT = 23
+
         if keys[pygame.K_LEFT]:
             self.rect.x -= 5
         if keys[pygame.K_RIGHT]:
@@ -24,7 +26,8 @@ class Player(pygame.sprite.Sprite):
         if self.vertical_v > 0:
             for platform in platforms:
                 if pygame.sprite.collide_rect(platform, self):
-                    self.rect.y = platform.rect.y - self.rect.height
-                    self.vertical_v = -25
-                    break
+                    if self.rect.y < platform.rect.y + self.vertical_v:
+                        self.rect.y = platform.rect.y - self.rect.height
+                        self.vertical_v = -JUMP_STRENGHT
+                        break
         return scroll

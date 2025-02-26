@@ -37,6 +37,7 @@ class Game:
         self.platforms.add(base)
 
         self.score = 0
+        self.font = pygame.font.Font(None, 36)
 
     async def run(self):
         while True:
@@ -66,6 +67,8 @@ class Game:
 
         self.platforms.draw(self.internal_surface)
         self.objects.draw(self.internal_surface)
+
+        self.internal_surface.blit(self.font.render(f"Score: {self.score}", True, (255, 255, 255)), (10, 10))
 
         scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
         self.screen.blit(scaled_surface, (0, 0))
