@@ -3,6 +3,7 @@ import asyncio
 import sys
 from platform import Platform, Platforms
 from player import Player
+from menus import EndScreen
 import random
 
 SCREEN_WIDTH = 720
@@ -16,6 +17,8 @@ PLAYER_SPEED = 5
 class Game:
     def __init__(self):
         pygame.init()
+        self.state = 2 #1 for playinf, 2 for end screen
+        self.menu = None
 
         info = pygame.display.Info()
         screen_width = info.current_w  # Get the current width
@@ -26,6 +29,8 @@ class Game:
         pygame.display.set_caption("Scaled Game Window")
         self.internal_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+        self.menu = EndScreen(self.internal_surface, self.s_f) #debuging
+
         self.clock = pygame.time.Clock()
 
         self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
@@ -33,8 +38,7 @@ class Game:
         self.objects.add(self.player)
 
         self.platforms = Platforms(s_width=SCREEN_WIDTH)
-        base = Platform(719, 0, 1260, 1)
-        self.platforms.add(base)
+        self.platforms.add(Platform(719, 0, 1260, 1))
 
         self.score = 0
         self.font = pygame.font.Font(None, 36)
@@ -42,11 +46,24 @@ class Game:
     async def run(self):
         while True:
             await self.handle_events()
-            await self.update()
-            self.draw()
-            self.clock.tick(FPS)
 
-            print(self.platforms)
+            match self.state:
+                case 1:
+                    await self.update()
+                    self.draw()
+                    self.clock.tick(FPS)
+                case 2 if self.menu != None:
+                    match await self.menu.update():
+                        case 1:
+                            self.re_init()
+                            continue
+                    self.menu.draw()
+                    scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
+                    self.screen.blit(scaled_surface, (0, 0))
+                    pygame.display.flip()
+                    self.clock.tick(FPS)
+                case _:
+                    Exception('game state not valid')
 
     async def handle_events(self):
         for event in pygame.event.get():
@@ -73,3 +90,15 @@ class Game:
         scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
         self.screen.blit(scaled_surface, (0, 0))
         pygame.display.flip()  # Update the display
+    
+    def re_init(self):
+        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+        self.objects = pygame.sprite.Group()
+        self.objects.add(self.player)
+
+        self.platforms = Platforms(s_width=SCREEN_WIDTH)
+        self.platforms.add(Platform(719, 0, 1260, 1))
+
+        self.score = 0
+        self.state = 1
+        del self.menu
