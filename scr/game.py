@@ -21,12 +21,15 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.vertical_v = 0 #vertical veliocity for jumping and falling + for down, - for up
 
-    def update(self, keys, platforms) -> int: #return how much to scroll
+    def update(self, platforms, s_f) -> int: #return how much to scroll
         JUMP_STRENGHT = 23
+        keys = pygame.key.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+        pressed, _, _ = pygame.mouse.get_pressed()
 
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or (mouse_pos[0] < 360*s_f and pressed):
             self.rect.x -= 5
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or (mouse_pos[0] > 360*s_f and pressed):
             self.rect.x += 5
         self.rect.y += self.vertical_v
         scroll = 0
@@ -220,8 +223,7 @@ class Game:
                 sys.exit()
 
     async def update(self):
-        keys = pygame.key.get_pressed()
-        scroll = self.player.update(keys=keys, platforms=self.platforms)  
+        scroll = self.player.update(platforms=self.platforms, s_f=self.s_f)  
         self.platforms.update(scroll_lenght=scroll, s_height=SCREEN_HEIGHT)
         self.score += scroll
         if self.player.rect.y > SCREEN_HEIGHT:
