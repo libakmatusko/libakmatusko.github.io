@@ -1,4 +1,11 @@
-# main.py
+# /// script
+# dependencies = [
+#  "platform",
+#  "player",
+#  "game",
+#  "menus",
+# ]
+# ///
 import asyncio
 from game import Game
 
