@@ -1,9 +1,8 @@
 # /// script
 # dependencies = [
-#  "platform",
-#  "player",
-#  "game",
-#  "menus",
+#  "js",
+#   "json",
+#   "pygbag"
 # ]
 # ///
 import asyncio

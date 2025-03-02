@@ -3,6 +3,9 @@ import asyncio
 import sys
 import random
 from typing import Union
+import json
+import js
+from pygbag.aio.fetch import RequestHandler
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 1280
@@ -37,6 +40,8 @@ class Player(pygame.sprite.Sprite):
             scroll = 400 - self.rect.y
             self.rect.y += scroll
         self.vertical_v += 1
+
+        self.rect.x = (self.rect.x + SCREEN_WIDTH) % SCREEN_WIDTH
 
         if self.vertical_v > 0:
             for platform in platforms:
@@ -127,18 +132,20 @@ class Button:
             if self.action:
                 return self.action()
         return False
-
+    
 
 class EndScreen:
-    def __init__(self, screen, s_f, score=None):
+    def __init__(self, screen, s_f, score=None, place=None):
+        print(place)
         self.screen = screen
         self.s_f = s_f
         self.font = pygame.font.Font(None, 36)
         self.buttons = []
 
         self.create_button(230, 800, 260, 100, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: 1)
+        self.create_button(200, 300, 320, 100, 'Meno...', self.font, action=self.js_input)
         if score:
-            self.create_button(230, 500, 260, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 0, 0))
+            self.create_button(230, 500, 260, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0))
 
     def draw(self):
         self.screen.fill((0, 0, 0))  # Black background
@@ -162,7 +169,12 @@ class EndScreen:
     ):
         self.buttons.append(Button(self.screen, self.s_f, x, y, width, height, text, font,text_color, color, hover_color, action))
 
-
+    def js_input(self):
+        butt = self.buttons[1] #lebo pole s menom vytvaram ako druhe ale je to konkretny nie vseobecny pristup
+        try:
+            butt.text = str(js.window.prompt("Enter your name:")).strip()
+        except AttributeError:
+            print('js.window nefunguje')
 
 class Game:
     def __init__(self):
@@ -182,6 +194,7 @@ class Game:
         self.menu = EndScreen(self.internal_surface, self.s_f) #debuging
 
         self.clock = pygame.time.Clock()
+        self.timer = 0
 
         self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
         self.objects = pygame.sprite.Group()
@@ -200,6 +213,9 @@ class Game:
 
             match self.state:
                 case 1:
+                    if self.timer==0:
+                        if pygame.mouse.get_pressed()[0]:
+                            self.timer = pygame.time.get_ticks()
                     await self.update()
                     self.draw()
                     self.clock.tick(FPS)
@@ -227,7 +243,7 @@ class Game:
         self.platforms.update(scroll_lenght=scroll, s_height=SCREEN_HEIGHT)
         self.score += scroll
         if self.player.rect.y > SCREEN_HEIGHT:
-            self.end()
+            await self.end()
 
     def draw(self):
         self.internal_surface.fill(BACKGROUND_COLOR)  # Fill the background
@@ -250,13 +266,32 @@ class Game:
         self.platforms.add(Platform(719, 0, 1260, 1))
 
         self.score = 0
+        self.timer = 0
         self.state = 1
         del self.menu
 
-    def end(self):
+    async def end(self):
+        self.score -= (pygame.time.get_ticks()-self.timer)//100
+
         self.player.kill()
         for platform in self.platforms:
             platform.kill()
 
+        handler = RequestHandler()
+        try:
+            response = await handler.post(
+                r'http://krabica.pythonanywhere.com/new_run',
+                data={'score':self.score, 'name':'Matus'}
+            )
+            if response:
+                response_data = json.loads(response)
+                place = response_data.get('position')
+            else:
+                print("POST Failed")
+                place = None
+        except Exception as e:
+            print("Failed to post data:", e)
+            place = None
+
         self.state = 2
-        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score)
+        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, place=place)
