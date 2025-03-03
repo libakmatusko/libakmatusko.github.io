@@ -6,6 +6,7 @@ from typing import Union
 import json
 import js
 from pygbag.aio.fetch import RequestHandler
+import threading
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 1280
@@ -135,18 +136,21 @@ class Button:
     
 
 class EndScreen:
-    def __init__(self, screen, s_f, score=None, place=None):
-        print(place)
+    def __init__(self, screen, s_f, score=None, name='Meno...'):
+        self.score = score
         self.screen = screen
         self.s_f = s_f
         self.font = pygame.font.Font(None, 36)
+        self.name = name
         self.buttons = []
 
-        self.create_button(230, 800, 260, 100, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: 1)
-        self.create_button(200, 300, 320, 100, 'Meno...', self.font, action=self.js_input)
+        self.create_button(230, 900, 260, 100, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: (1, self.name))
+        self.create_button(200, 300, 320, 100, self.name, self.font, action=self.js_input)
         if score:
-            self.create_button(230, 500, 260, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0))
+            self.create_button(200, 500, 320, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0))
+        self.create_button(230, 700, 260, 100, '', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 0, 0))
 
+        self.data_send()
     def draw(self):
         self.screen.fill((0, 0, 0))  # Black background
         for button in self.buttons:
@@ -172,9 +176,36 @@ class EndScreen:
     def js_input(self):
         butt = self.buttons[1] #lebo pole s menom vytvaram ako druhe ale je to konkretny nie vseobecny pristup
         try:
-            butt.text = str(js.window.prompt("Enter your name:")).strip()
+            self.name = str(js.window.prompt("Enter your name:")).strip()
+            butt.text = self.name
         except AttributeError:
             print('js.window nefunguje')
+    
+    async def data_fetch(self):
+        if self.score:
+            handler = RequestHandler()
+            try:
+                response = await handler.post(
+                    r'https://krabica.pythonanywhere.com/new_run',
+                    data={'score':self.score, 'name':self.name}
+                )
+                if response:
+                    response_data = json.loads(response)
+                    rank = response_data.get('position')
+                    self.buttons[3].text = f'rank: {rank}'
+                else:
+                    print("POST Failed")
+            except Exception as e:
+                print("Failed to post data:", e)
+            print('data fetched')
+        else:
+            print('score is None')
+
+    def data_send(self):
+        self.loop = asyncio.get_event_loop()
+        self.loop.create_task(self.data_fetch())
+
+
 
 class Game:
     def __init__(self):
@@ -205,6 +236,7 @@ class Game:
 
         self.score = 0
         self.font = pygame.font.Font(None, 36)
+        self.name = ''
 
     async def run(self):
         while True:
@@ -221,8 +253,8 @@ class Game:
                     self.clock.tick(FPS)
                 case 2 if self.menu != None:
                     match await self.menu.update():
-                        case 1:
-                            self.re_init()
+                        case (1, name):
+                            self.re_init(name=name)
                             continue
                     self.menu.draw()
                     scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
@@ -257,7 +289,7 @@ class Game:
         self.screen.blit(scaled_surface, (0, 0))
         pygame.display.flip()  # Update the display
     
-    def re_init(self):
+    def re_init(self, name):
         self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
         self.objects = pygame.sprite.Group()
         self.objects.add(self.player)
@@ -268,6 +300,7 @@ class Game:
         self.score = 0
         self.timer = 0
         self.state = 1
+        self.name = name
         del self.menu
 
     async def end(self):
@@ -277,21 +310,7 @@ class Game:
         for platform in self.platforms:
             platform.kill()
 
-        handler = RequestHandler()
-        try:
-            response = await handler.post(
-                r'https://krabica.pythonanywhere.com/new_run',
-                data={'score':self.score, 'name':'Matus'}
-            )
-            if response:
-                response_data = json.loads(response)
-                place = response_data.get('position')
-            else:
-                print("POST Failed")
-                place = None
-        except Exception as e:
-            print("Failed to post data:", e)
-            place = None
+        
 
         self.state = 2
-        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, place=place)
+        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, name=self.name)
