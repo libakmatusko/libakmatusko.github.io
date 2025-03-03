@@ -145,9 +145,9 @@ class EndScreen:
         self.buttons = []
 
         self.create_button(230, 900, 260, 100, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: (1, self.name))
-        self.create_button(200, 300, 320, 100, self.name, self.font, action=self.js_input)
+        self.create_button(200, 450, 320, 100, self.name, self.font, action=self.js_input)
         if score:
-            self.create_button(200, 500, 320, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0))
+            self.create_button(200, 600, 320, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0))
         self.create_button(230, 700, 260, 100, '', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 0, 0))
 
         self.data_send()
