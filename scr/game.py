@@ -280,7 +280,7 @@ class Game:
         handler = RequestHandler()
         try:
             response = await handler.post(
-                r'http://krabica.pythonanywhere.com/new_run',
+                r'https://krabica.pythonanywhere.com/new_run',
                 data={'score':self.score, 'name':'Matus'}
             )
             if response:
