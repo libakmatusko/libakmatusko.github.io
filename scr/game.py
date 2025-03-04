@@ -143,16 +143,18 @@ class EndScreen:
         self.font = pygame.font.Font(None, 36)
         self.name = name
         self.buttons = []
+        self.leaderboard_menu = None
 
         self.focused = True
 
         self.create_button(230, 900, 260, 100, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: (1, self.name))
         self.create_button(200, 450, 320, 100, self.name, self.font, action=self.js_input)
         if score:
-            self.create_button(200, 600, 320, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0))
-        self.create_button(230, 700, 260, 100, '', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 0, 0))
+            self.create_button(200, 600, 320, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0), action=lambda: 3)
+        self.create_button(230, 700, 260, 100, '', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 0, 0), action=lambda: 3)
 
         self.data_send()
+
     def draw(self):
         self.screen.fill((0, 0, 0))  # Black background
         for button in self.buttons:
@@ -216,11 +218,93 @@ class EndScreen:
         self.loop.create_task(self.data_fetch())
 
 
+class LeaderboardScreen:
+    def __init__(self, screen, s_f, name=None):
+        self.screen = screen
+        self.s_f = s_f
+        self.name = name
+        self.scrolled = 0
+        self.buttons = []
+        self.leaderboard = [{'name':'. . .', 'score':-1}]
+        self.font = pygame.font.Font(None, 36)
+
+        self.create_button(150, 70, 20, 70, '#', pygame.font.Font(None, 54))
+        self.create_button(170, 70, 200, 70, 'Name', pygame.font.Font(None, 54))
+        self.create_button(370, 70, 200, 70, 'Score', pygame.font.Font(None, 54))
+
+        self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 2)
+
+        self.data_get()
+
+    def draw(self):
+        self.screen.fill((0, 0, 0))
+
+        table = pygame.Surface((420, len(self.leaderboard) * 50))
+        for i, entry in enumerate(self.leaderboard):
+            rect = pygame.Rect(1, i*50, 28, 50)
+            pygame.draw.rect(table, (255, 255, 255), rect)
+            text_surface = self.font.render(f'{i+1}.', True, (0, 0, 0))
+            text_rect = text_surface.get_rect(center=rect.center)
+            table.blit(text_surface, text_rect)
+
+            
+            rect = pygame.Rect(21, i*50, 198, 50)
+            pygame.draw.rect(table, (255, 255, 255), rect)
+            text_surface = self.font.render(f'{entry['name']}', True, (0, 0, 0))
+            text_rect = text_surface.get_rect(center=rect.center)
+            table.blit(text_surface, text_rect)
+
+            
+            rect = pygame.Rect(221, i*50, 198, 50)
+            pygame.draw.rect(table, (255, 255, 255), rect)
+            text_surface = self.font.render(f'{entry['score']}', True, (0, 0, 0))
+            text_rect = text_surface.get_rect(center=rect.center)
+            table.blit(text_surface, text_rect)
+        self.screen.blit(table, (150, 150), (0, self.scrolled, 420, 800))
+
+        for button in self.buttons:
+            button.draw()
+        
+    async def update(self):
+        keys = pygame.mouse.get_pressed()
+        if keys[0]:
+            click_pos = pygame.mouse.get_pos()
+            for button in self.buttons:
+                r = button.check_click(click_pos)
+                if r:
+                    return r
+
+    def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
+            text_color:tuple[int, int, int]=(0, 0, 0),
+            color:tuple[int, int, int]=(255, 255, 255),
+            hover_color:Union[None, tuple[int, int, int]]=None,
+            action=None
+        ):
+            self.buttons.append(Button(self.screen, self.s_f, x, y, width, height, text, font,text_color, color, hover_color, action))
+    
+    async def data_fetch(self):
+        handler = RequestHandler()
+        try:
+            response = await handler.get(
+                r'https://krabica.pythonanywhere.com/leaderboard'
+            )
+            if response:
+                self.leaderboard = json.loads(response)
+            else:
+                print("GET Failed")
+        except Exception as e:
+            print("Failed to get data:", e)
+        print('data fetched')
+
+    def data_get(self):
+        self.loop = asyncio.get_event_loop()
+        self.loop.create_task(self.data_fetch())
+
 
 class Game:
     def __init__(self):
         pygame.init()
-        self.state = 2 #1 for playinf, 2 for end screen
+        self.state = 2 #1 for playinf, 2 for end screen, 3 for leaderboard
         self.menu = None
 
         info = pygame.display.Info()
@@ -232,7 +316,7 @@ class Game:
         pygame.display.set_caption("Scaled Game Window")
         self.internal_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        self.menu = EndScreen(self.internal_surface, self.s_f) #debuging
+        self.menu = EndScreen(self.internal_surface, self.s_f)
 
         self.clock = pygame.time.Clock()
         self.timer = 0
@@ -260,19 +344,33 @@ class Game:
                             self.timer = pygame.time.get_ticks()
                     await self.update()
                     self.draw()
-                    self.clock.tick(FPS)
+
                 case 2 if self.menu != None:
                     match await self.menu.update():
                         case (1, name):
                             self.re_init(name=name)
                             continue
+                        case 3:
+                            self.menu.leaderboard_menu = LeaderboardScreen(self.internal_surface, self.s_f, self.name)
+                            self.state = 3
+                            self.menu.leaderboard_menu.draw()
+                            continue
                     self.menu.draw()
-                    scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
-                    self.screen.blit(scaled_surface, (0, 0))
-                    pygame.display.flip()
-                    self.clock.tick(FPS)
+                    
+                case 3:
+                    match await self.menu.leaderboard_menu.update():
+                        case 2:
+                            self.menu.leaderboard_menu = None
+                            self.state = 2
+                            continue
+                    self.menu.leaderboard_menu.draw()
+
                 case _:
                     Exception('game state not valid')
+            scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
+            self.screen.blit(scaled_surface, (0, 0))
+            pygame.display.flip()
+            self.clock.tick(FPS)
 
     async def handle_events(self):
         for event in pygame.event.get():
@@ -294,10 +392,6 @@ class Game:
         self.objects.draw(self.internal_surface)
 
         self.internal_surface.blit(self.font.render(f"Score: {self.score}", True, (255, 255, 255)), (10, 10))
-
-        scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
-        self.screen.blit(scaled_surface, (0, 0))
-        pygame.display.flip()  # Update the display
     
     def re_init(self, name):
         self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
