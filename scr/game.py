@@ -193,6 +193,7 @@ class EndScreen:
         try:
             self.name = str(js.window.prompt("Enter your name:")).strip()
             butt.text = self.name
+            butt.action = None
             self.focused = False
         except AttributeError:
             print('js.window nefunguje')
