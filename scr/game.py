@@ -160,15 +160,19 @@ class EndScreen:
 
     async def update(self):
         keys = pygame.mouse.get_pressed()
-        print(keys, self.focused)
         if keys[0] and self.focused:
             click_pos = pygame.mouse.get_pos()
             for button in self.buttons:
                 r = button.check_click(click_pos)
                 if r:
                     return r
-        elif not keys[0]:
+        elif not keys[0] and (not self.focused):
             self.focused = True
+            click_pos = pygame.mouse.get_pos()
+            for button in self.buttons:
+                r = button.check_click(click_pos)
+                if r:
+                    return r
 
     def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
         text_color:tuple[int, int, int]=(0, 0, 0),
