@@ -178,6 +178,7 @@ class EndScreen:
         try:
             self.name = str(js.window.prompt("Enter your name:")).strip()
             butt.text = self.name
+            await asyncio.sleep(0.1)
         except AttributeError:
             print('js.window nefunguje')
     
