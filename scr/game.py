@@ -6,7 +6,7 @@ from typing import Union
 import json
 import js
 from pygbag.aio.fetch import RequestHandler
-import threading
+import time
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 1280
@@ -144,6 +144,8 @@ class EndScreen:
         self.name = name
         self.buttons = []
 
+        self.focused = True
+
         self.create_button(230, 900, 260, 100, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: (1, self.name))
         self.create_button(200, 450, 320, 100, self.name, self.font, action=self.js_input)
         if score:
@@ -158,12 +160,15 @@ class EndScreen:
 
     async def update(self):
         keys = pygame.mouse.get_pressed()
-        if keys[0]:
+        print(keys, self.focused)
+        if keys[0] and self.focused:
             click_pos = pygame.mouse.get_pos()
             for button in self.buttons:
                 r = button.check_click(click_pos)
                 if r:
                     return r
+        elif not keys[0]:
+            self.focused = True
 
     def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
         text_color:tuple[int, int, int]=(0, 0, 0),
@@ -178,7 +183,7 @@ class EndScreen:
         try:
             self.name = str(js.window.prompt("Enter your name:")).strip()
             butt.text = self.name
-            await asyncio.sleep(0.1)
+            self.focused = False
         except AttributeError:
             print('js.window nefunguje')
     
