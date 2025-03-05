@@ -205,10 +205,8 @@ class EndScreen:
             button.draw()
 
     async def update(self):
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:  # Check if a key is pressed
-                if event.key == pygame.K_RETURN:
-                    return (1, self.name)
+        if pygame.key.get_pressed()[pygame.K_RETURN]:
+            return (1, self.name)
         keys = pygame.mouse.get_pressed()
         if keys[0] and self.focused:
             click_pos = pygame.mouse.get_pos()
