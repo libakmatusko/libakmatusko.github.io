@@ -255,9 +255,9 @@ class EndScreen:
                     response_data = json.loads(response)
                     rank = response_data.get('position')
                     self.buttons[3].text = f'rank: {rank}'
-                    self.buttons[2].color = (max(255-255*self.score//response_data.get('max', self.score), 0), 255, 0)
-                    self.buttons[2].hover_color = (255-255*self.score//response_data.get('max', self.score), 255, 0)
-                    self.buttons[2].text_color = (255*self.score//response_data.get('max', self.score), )*3
+                    self.buttons[2].color = (255-max(255*self.score//response_data.get('max', self.score), 0), 255, 0)
+                    self.buttons[2].hover_color = (255-max(255*self.score//response_data.get('max', self.score), 0), 255, 0)
+                    self.buttons[2].text_color = (max(255*self.score//response_data.get('max', self.score), 0), )*3
                 else:
                     print("POST Failed")
             except Exception as e:
