@@ -188,14 +188,16 @@ class EndScreen:
         self.name = name
         self.buttons = []
         self.leaderboard_menu = None
+        self.log_in_menu = None
 
         self.focused = True
 
-        self.create_button(230, 900, 260, 100, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: (1, self.name))
-        self.create_button(200, 450, 320, 100, self.name, self.font, action=self.js_input)
+        self.create_button(230, 900, 260, 70, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: (1, self.name))
+        self.create_button(200, 400, 320, 70, self.name, self.font, action=self.js_input)
         if score:
             self.create_button(200, 600, 320, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0), action=lambda: 3)
         self.create_button(230, 700, 260, 100, '', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 0, 0), action=lambda: 3)
+        self.create_button(230, 500, 260, 70, 'Log in', self.font, action=lambda: 4)
 
         self.data_send()
 
@@ -253,7 +255,7 @@ class EndScreen:
                     response_data = json.loads(response)
                     rank = response_data.get('position')
                     self.buttons[3].text = f'rank: {rank}'
-                    self.buttons[2].color = (255-255*self.score//response_data.get('max', self.score), 255, 0)
+                    self.buttons[2].color = (max(255-255*self.score//response_data.get('max', self.score), 0), 255, 0)
                     self.buttons[2].hover_color = (255-255*self.score//response_data.get('max', self.score), 255, 0)
                     self.buttons[2].text_color = (255*self.score//response_data.get('max', self.score), )*3
                 else:
@@ -270,10 +272,11 @@ class EndScreen:
 
 
 class LeaderboardScreen:
-    def __init__(self, screen, s_f, name=None):
+    def __init__(self, screen, s_f, name='', color=(255, 255, 255)):
         self.screen = screen
         self.s_f = s_f
         self.name = name
+        self.color = color
         self.scrolled = 0
         self.buttons = []
         self.leaderboard = [{'name':'. . .', 'score':-1}]
@@ -293,21 +296,21 @@ class LeaderboardScreen:
         table = pygame.Surface((420, len(self.leaderboard) * 50))
         for i, entry in enumerate(self.leaderboard):
             rect = pygame.Rect(0, i*50, 38, 50)
-            pygame.draw.rect(table, (255, 255, 255), rect)
+            pygame.draw.rect(table, self.color if self.name==entry['name'] else (255, 255, 255), rect)
             text_surface = self.font.render(f'{i+1}.', True, (0, 0, 0))
             text_rect = text_surface.get_rect(center=rect.center)
             table.blit(text_surface, text_rect)
 
             
             rect = pygame.Rect(41, i*50, 188, 50)
-            pygame.draw.rect(table, (255, 255, 255), rect)
+            pygame.draw.rect(table, self.color if self.name==entry['name'] else (255, 255, 255), rect)
             text_surface = self.font.render(f'{entry['name']}', True, (0, 0, 0))
             text_rect = text_surface.get_rect(center=rect.center)
             table.blit(text_surface, text_rect)
 
             
             rect = pygame.Rect(231, i*50, 188, 50)
-            pygame.draw.rect(table, (255, 255, 255), rect)
+            pygame.draw.rect(table, self.color if self.name==entry['name'] else (255, 255, 255), rect)
             text_surface = self.font.render(f'{entry['score']}', True, (0, 0, 0))
             text_rect = text_surface.get_rect(center=rect.center)
             table.blit(text_surface, text_rect)
@@ -357,10 +360,90 @@ class LeaderboardScreen:
         self.loop.create_task(self.data_fetch())
 
 
+class LogInScreen:
+    def __init__(self, screen, s_f, name):
+        self.screen = screen
+        self.s_f = s_f
+        self.font = pygame.font.Font(None, 54)
+        self.inputs = ['meno/email' if name == 'Meno...' else name, 'heslo']
+        self.buttons = []
+
+        self.focused = True
+
+        self.create_button(200, 400, 320, 100, self.inputs[0], self.font, action=lambda: self.js_input(0))
+        self.create_button(200, 550, 320, 100, self.inputs[1], self.font, action=lambda: self.js_input(1))
+        self.create_button(200, 750, 320, 100, 'LOG IN', self.font, color=(118, 255, 3), action=self.log_in)
+        
+        self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 2)
+
+    def draw(self):
+        self.screen.fill((0, 0, 0))  # Black background
+        for button in self.buttons:
+            button.draw()
+
+    async def update(self):
+        if pygame.key.get_pressed()[pygame.K_RETURN]:
+            return (1, self.name)
+        keys = pygame.mouse.get_pressed()
+        if keys[0] and self.focused:
+            click_pos = pygame.mouse.get_pos()
+            for button in self.buttons:
+                r = button.check_click(click_pos)
+                if r:
+                    return r
+        elif not keys[0] and (not self.focused):
+            self.focused = True
+            click_pos = pygame.mouse.get_pos()
+            for button in self.buttons:
+                r = button.check_click(click_pos)
+                if r:
+                    return r
+
+    def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
+        text_color:tuple[int, int, int]=(0, 0, 0),
+        color:tuple[int, int, int]=(255, 255, 255),
+        hover_color:Union[None, tuple[int, int, int]]=None,
+        action=None
+    ):
+        self.buttons.append(Button(self.screen, self.s_f, x, y, width, height, text, font,text_color, color, hover_color, action))
+
+    def js_input(self, i):
+        butt = self.buttons[i] #lebo pole s menom vytvaram ako druhe ale je to konkretny nie vseobecny pristup
+        try:
+            self.inputs[i] = str(js.window.prompt("Enter here:")).strip()
+            butt.text = self.inputs[i]
+            self.focused = False
+        except AttributeError:
+            print('js.window nefunguje')
+    
+    async def log_in(self):
+        if self.score:
+            handler = RequestHandler()
+            try:
+                response = await handler.post(
+                    r'https://krabica.pythonanywhere.com/new_run',
+                    data={'score':self.score, 'name':self.name}
+                )
+                if response:
+                    response_data = json.loads(response)
+                    rank = response_data.get('position')
+                    self.buttons[3].text = f'rank: {rank}'
+                    self.buttons[2].color = (255-255*self.score//response_data.get('max', self.score), 255, 0)
+                    self.buttons[2].hover_color = (max(255-255*self.score//response_data.get('max', self.score), 0), 255, 0)
+                    self.buttons[2].text_color = (min(255*self.score//response_data.get('max', self.score), 255), )*3
+                else:
+                    print("POST Failed")
+            except Exception as e:
+                print("Failed to post data:", e)
+            print('data fetched')
+        else:
+            print('score is None')
+
+
 class Game:
     def __init__(self):
         pygame.init()
-        self.state = 2 #1 for playinf, 2 for end screen, 3 for leaderboard
+        self.state = 2 #1 for playinf, 2 for end screen, 3 for leaderboard, 4 for log in
         self.menu = None
 
         info = pygame.display.Info()
@@ -397,9 +480,6 @@ class Game:
             match self.state:
                 case 1:
                     await self.handle_events()
-                    if self.timer==0:
-                        if pygame.mouse.get_pressed()[0]:
-                            self.timer = pygame.time.get_ticks()
                     await self.update()
                     self.draw()
 
@@ -409,10 +489,14 @@ class Game:
                             self.re_init(name=name)
                             continue
                         case 3:
-                            self.menu.leaderboard_menu = LeaderboardScreen(self.internal_surface, self.s_f, self.name)
+                            self.menu.leaderboard_menu = LeaderboardScreen(self.internal_surface, self.s_f, self.name, self.menu.buttons[2].color)
                             self.state = 3
                             self.menu.leaderboard_menu.draw()
                             continue
+                        case 4:
+                            self.menu.log_in_menu = LogInScreen(self.internal_surface, self.s_f, name=self.name)
+                            self.state = 4
+                            self.menu.log_in_menu.draw()
                     self.menu.draw()
                     
                 case 3:
@@ -422,6 +506,14 @@ class Game:
                             self.state = 2
                             continue
                     self.menu.leaderboard_menu.draw()
+                
+                case 4:
+                    match await self.menu.log_in_menu.update():
+                        case 2:
+                            self.menu.log_in_menu = None
+                            self.state = 2
+                            continue
+                    self.menu.log_in_menu.draw()
 
                 case _:
                     Exception('game state not valid')
@@ -431,7 +523,9 @@ class Game:
             self.clock.tick(FPS)
 
     async def handle_events(self):
-        for event in pygame.event.get():
+        for event in pygame.event.get():        
+            if self.timer==0:
+                self.timer = pygame.time.get_ticks()
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
