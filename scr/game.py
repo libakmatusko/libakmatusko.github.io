@@ -279,9 +279,9 @@ class LeaderboardScreen:
         self.leaderboard = [{'name':'. . .', 'score':-1}]
         self.font = pygame.font.Font(None, 36)
 
-        self.create_button(150, 70, 20, 70, '#', pygame.font.Font(None, 54))
-        self.create_button(170, 70, 200, 70, 'Name', pygame.font.Font(None, 54))
-        self.create_button(370, 70, 200, 70, 'Score', pygame.font.Font(None, 54))
+        self.create_button(150, 70, 40, 70, '#', pygame.font.Font(None, 54))
+        self.create_button(190, 70, 190, 70, 'Name', pygame.font.Font(None, 54))
+        self.create_button(380, 70, 190, 70, 'Score', pygame.font.Font(None, 54))
 
         self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 2)
 
@@ -292,31 +292,36 @@ class LeaderboardScreen:
 
         table = pygame.Surface((420, len(self.leaderboard) * 50))
         for i, entry in enumerate(self.leaderboard):
-            rect = pygame.Rect(1, i*50, 28, 50)
+            rect = pygame.Rect(0, i*50, 38, 50)
             pygame.draw.rect(table, (255, 255, 255), rect)
             text_surface = self.font.render(f'{i+1}.', True, (0, 0, 0))
             text_rect = text_surface.get_rect(center=rect.center)
             table.blit(text_surface, text_rect)
 
             
-            rect = pygame.Rect(21, i*50, 198, 50)
+            rect = pygame.Rect(41, i*50, 188, 50)
             pygame.draw.rect(table, (255, 255, 255), rect)
             text_surface = self.font.render(f'{entry['name']}', True, (0, 0, 0))
             text_rect = text_surface.get_rect(center=rect.center)
             table.blit(text_surface, text_rect)
 
             
-            rect = pygame.Rect(221, i*50, 198, 50)
+            rect = pygame.Rect(231, i*50, 188, 50)
             pygame.draw.rect(table, (255, 255, 255), rect)
             text_surface = self.font.render(f'{entry['score']}', True, (0, 0, 0))
             text_rect = text_surface.get_rect(center=rect.center)
             table.blit(text_surface, text_rect)
-        self.screen.blit(table, (150, 150), (0, self.scrolled, 420, 800))
+        self.screen.blit(table, (150, 150), (0, self.scrolled, 420, 1000))
 
         for button in self.buttons:
             button.draw()
         
     async def update(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEWHEEL:
+                self.scrolled -= event.y*15
+        self.scrolled = max(min((len(self.leaderboard)-20)*50, self.scrolled), 0)
+
         keys = pygame.mouse.get_pressed()
         if keys[0]:
             click_pos = pygame.mouse.get_pos()
@@ -324,7 +329,7 @@ class LeaderboardScreen:
                 r = button.check_click(click_pos)
                 if r:
                     return r
-
+        
     def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
             text_color:tuple[int, int, int]=(0, 0, 0),
             color:tuple[int, int, int]=(255, 255, 255),
@@ -388,10 +393,10 @@ class Game:
     async def run(self):
         while True:
             await asyncio.sleep(0)
-            await self.handle_events()
 
             match self.state:
                 case 1:
+                    await self.handle_events()
                     if self.timer==0:
                         if pygame.mouse.get_pressed()[0]:
                             self.timer = pygame.time.get_ticks()
