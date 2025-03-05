@@ -54,6 +54,46 @@ class Player(pygame.sprite.Sprite):
         return scroll
 
 
+class PowerUps:
+    def __init__(self, s_width:int=720):
+        super().__init__()
+        self.s_width = s_width
+        self.scrolled = 0
+        self.score = 0
+
+    def update(self, scroll_lenght:int=0, s_height:int=128):
+        self.scrolled += scroll_lenght
+        self.score += scroll_lenght
+        if self.scrolled >= 200:
+            self.scrolled -= 200
+            self.add(Platform(
+                150,
+                random.randint(150, self.s_width-300),
+                -200+self.scrolled,
+                300,
+                pos=random.randint(0, 599),
+                speed=random.gauss(1+(self.score/10000), 0.5*self.score/10000)
+            ))
+
+        for sprite in self.sprites():
+            sprite.update(scroll_lenght=scroll_lenght, s_height=s_height)
+
+
+
+class Coin (pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((50, 50), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, (255, 215, 0), (25, 25), 25)  # Gold color
+        self.rect = self.image.get_rect(center=(x, y))
+
+
+    def update(self, scroll_lenght:int=0, s_height:int=128):
+        self.rect.y += scroll_lenght
+        if self.rect.y > s_height:
+            self.kill()
+
+
 class Platforms(pygame.sprite.Group):
     def __init__(self, s_width:int=720):
         super().__init__()
@@ -165,6 +205,10 @@ class EndScreen:
             button.draw()
 
     async def update(self):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:  # Check if a key is pressed
+                if event.key == pygame.K_RETURN:
+                    return 1
         keys = pygame.mouse.get_pressed()
         if keys[0] and self.focused:
             click_pos = pygame.mouse.get_pos()
@@ -406,6 +450,8 @@ class Game:
 
         self.platforms = Platforms(s_width=SCREEN_WIDTH)
         self.platforms.add(Platform(719, 0, 1260, 1))
+
+
 
         self.score = 0
         self.timer = 0
