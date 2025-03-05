@@ -25,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.vertical_v = 0 #vertical veliocity for jumping and falling + for down, - for up
 
-    def update(self, platforms, s_f) -> int: #return how much to scroll
+    def update(self, platforms, power_ups, s_f) -> (int, int): #return how much to scroll
         JUMP_STRENGHT = 23
         keys = pygame.key.get_pressed()
         mouse_pos = pygame.mouse.get_pos()
@@ -51,10 +51,17 @@ class Player(pygame.sprite.Sprite):
                         self.rect.y = platform.rect.y - self.rect.height
                         self.vertical_v = -JUMP_STRENGHT
                         break
-        return scroll
+        for power_up in power_ups:
+            if pygame.sprite.collide_rect(power_up, self):
+                if power_up.power == 'coin':
+                    print('coin')
+                    power_up.kill()
+                    return (scroll, 500)
+
+        return (scroll, 0)
 
 
-class PowerUps:
+class PowerUps (pygame.sprite.Group):
     def __init__(self, s_width:int=720):
         super().__init__()
         self.s_width = s_width
@@ -63,17 +70,9 @@ class PowerUps:
 
     def update(self, scroll_lenght:int=0, s_height:int=128):
         self.scrolled += scroll_lenght
-        self.score += scroll_lenght
-        if self.scrolled >= 200:
-            self.scrolled -= 200
-            self.add(Platform(
-                150,
-                random.randint(150, self.s_width-300),
-                -200+self.scrolled,
-                300,
-                pos=random.randint(0, 599),
-                speed=random.gauss(1+(self.score/10000), 0.5*self.score/10000)
-            ))
+        if self.scrolled >= 2550:
+            self.scrolled -= 2550
+            self.add(Coin(random.randint(25, 695), -200+self.scrolled))
 
         for sprite in self.sprites():
             sprite.update(scroll_lenght=scroll_lenght, s_height=s_height)
@@ -86,7 +85,7 @@ class Coin (pygame.sprite.Sprite):
         self.image = pygame.Surface((50, 50), pygame.SRCALPHA)
         pygame.draw.circle(self.image, (255, 215, 0), (25, 25), 25)  # Gold color
         self.rect = self.image.get_rect(center=(x, y))
-
+        self.power = 'coin'
 
     def update(self, scroll_lenght:int=0, s_height:int=128):
         self.rect.y += scroll_lenght
@@ -376,6 +375,8 @@ class Game:
         self.platforms = Platforms(s_width=SCREEN_WIDTH)
         self.platforms.add(Platform(719, 0, 1260, 1))
 
+        self.power_ups = PowerUps()
+
         self.score = 0
         self.font = pygame.font.Font(None, 36)
         self.name = ''
@@ -427,8 +428,10 @@ class Game:
                 sys.exit()
 
     async def update(self):
-        scroll = self.player.update(platforms=self.platforms, s_f=self.s_f)  
+        scroll, bonus = self.player.update(platforms=self.platforms, power_ups=self.power_ups, s_f=self.s_f)
+        self.score += bonus
         self.platforms.update(scroll_lenght=scroll, s_height=SCREEN_HEIGHT)
+        self.power_ups.update(scroll_lenght=scroll, s_height=SCREEN_HEIGHT)
         self.score += scroll
         if self.player.rect.y > SCREEN_HEIGHT:
             await self.end()
@@ -438,6 +441,7 @@ class Game:
 
         self.platforms.draw(self.internal_surface)
         self.objects.draw(self.internal_surface)
+        self.power_ups.draw(self.internal_surface)
 
         self.internal_surface.blit(self.font.render(f"Score: {self.score}", True, (255, 255, 255)), (10, 10))
     
@@ -449,7 +453,7 @@ class Game:
         self.platforms = Platforms(s_width=SCREEN_WIDTH)
         self.platforms.add(Platform(719, 0, 1260, 1))
 
-
+        self.power_ups = PowerUps()
 
         self.score = 0
         self.timer = 0
