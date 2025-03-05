@@ -128,6 +128,7 @@ class Platform(pygame.sprite.Sprite):
         self.range = range
         self.pos = pos
         self.speed = speed
+        self.x = self.rect.x
 
 
     def update(self, scroll_lenght:int=0, s_height:int=128):
@@ -135,9 +136,10 @@ class Platform(pygame.sprite.Sprite):
         if self.rect.y > s_height:
             self.kill()
         if self.pos < self.range:
-            self.rect.x += self.speed
+            self.x += self.speed
         else:
-            self.rect.x -= self.speed
+            self.x -= self.speed
+        self.rect.x = self.x
         self.pos += 1
         self.pos %= self.range*2
 
