@@ -48,7 +48,7 @@ def leaderboard_view():
 def new_run(entry: ScoreEntry):
     if entry.name in players:
         if players[entry.name]["score"] >= entry.score:
-            return {"message": "Score not improved", "position": get_index(entry.name) + 1}
+            return {"message": "Score not improved", "position": get_index(entry.name) + 1, 'max':leaderboard[0].score}
         
         leaderboard.pop(bisect_right(leaderboard, -players[entry.name]["score"], key=lambda x: -x.score) - 1)
         
@@ -61,7 +61,7 @@ def new_run(entry: ScoreEntry):
         players[entry.name] = entry.dict()
     
     save_data()
-    return {"message": "Score added", "position": index + 1}
+    return {"message": "Score added", "position": index + 1, 'max':leaderboard[0].score}
 
 def get_index(name: str):
     for i, ent in enumerate(leaderboard):
