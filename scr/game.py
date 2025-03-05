@@ -192,8 +192,9 @@ class EndScreen:
         butt = self.buttons[1] #lebo pole s menom vytvaram ako druhe ale je to konkretny nie vseobecny pristup
         try:
             self.name = str(js.window.prompt("Enter your name:")).strip()
-            butt.text = self.name
-            butt.action = None
+            if len(self.name) < 20:
+                butt.text = self.name
+                butt.action = None
             self.focused = False
         except AttributeError:
             print('js.window nefunguje')

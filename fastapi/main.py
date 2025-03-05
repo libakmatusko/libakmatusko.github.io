@@ -32,7 +32,7 @@ def load_data():
 
 def save_data():
     with open(LEADERBOARD_FILE, "w") as f:
-        json.dump({"leaderboard": [entry.dict() for entry in leaderboard], "players": players}, f)
+        json.dump({"leaderboard": [entry.dict() for entry in leaderboard], "players": players}, f, indent=4)
 
 leaderboard, players = load_data()
 
