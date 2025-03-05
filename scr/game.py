@@ -370,7 +370,7 @@ class LogInScreen:
 
         self.create_button(200, 400, 320, 100, self.inputs[0], self.font, action=lambda: self.js_input(0))
         self.create_button(200, 550, 320, 100, self.inputs[1], self.font, action=lambda: self.js_input(1))
-        self.create_button(200, 750, 320, 100, 'LOG IN', self.font, color=(118, 255, 3), action=lambda: await self.log_in)
+        self.create_button(200, 750, 320, 100, 'LOG IN', self.font, color=(118, 255, 3), action=lambda: asyncio.run(self.log_in()))
         self.create_button(200, 900, 320, 100, 'SIGN IN', self.font, color=(29, 233, 182), action=lambda: js.window.open(r'https://libakmatusko.github.io/sing_in', "_blank"))
         
         self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 2)
