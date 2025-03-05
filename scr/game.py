@@ -444,7 +444,7 @@ class Game:
         self.objects.draw(self.internal_surface)
         self.power_ups.draw(self.internal_surface)
 
-        self.internal_surface.blit(self.font.render(f"Score: {self.score}", True, (255, 255, 255)), (10, 10))
+        self.internal_surface.blit(self.font.render(f"Score: {self.score-(pygame.time.get_ticks()-self.timer)//200}", True, (255, 255, 255)), (10, 10))
     
     def re_init(self, name):
         self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
