@@ -54,7 +54,6 @@ class Player(pygame.sprite.Sprite):
         for power_up in power_ups:
             if pygame.sprite.collide_rect(power_up, self):
                 if power_up.power == 'coin':
-                    print('coin')
                     power_up.kill()
                     return (scroll, 500)
 
@@ -464,7 +463,7 @@ class Game:
         del self.menu
 
     async def end(self):
-        self.score -= (pygame.time.get_ticks()-self.timer)//100
+        self.score -= (pygame.time.get_ticks()-self.timer)//200
 
         self.player.kill()
         for platform in self.platforms:
