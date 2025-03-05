@@ -365,14 +365,13 @@ class LogInScreen:
         self.screen = screen
         self.s_f = s_f
         self.font = pygame.font.Font(None, 54)
-        self.inputs = ['meno/email' if name == 'Meno...' else name, 'heslo']
+        self.inputs = ['meno/email' if name in ('Meno...', '') else name, 'heslo']
         self.buttons = []
-
-        self.focused = True
 
         self.create_button(200, 400, 320, 100, self.inputs[0], self.font, action=lambda: self.js_input(0))
         self.create_button(200, 550, 320, 100, self.inputs[1], self.font, action=lambda: self.js_input(1))
-        self.create_button(200, 750, 320, 100, 'LOG IN', self.font, color=(118, 255, 3), action=self.log_in)
+        self.create_button(200, 750, 320, 100, 'LOG IN', self.font, color=(118, 255, 3), action=lambda: await self.log_in)
+        self.create_button(200, 900, 320, 100, 'SIGN IN', self.font, color=(29, 233, 182), action=lambda: js.window.open(r'https://libakmatusko.github.io/sing_in', "_blank"))
         
         self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 2)
 
@@ -382,22 +381,17 @@ class LogInScreen:
             button.draw()
 
     async def update(self):
-        if pygame.key.get_pressed()[pygame.K_RETURN]:
-            return (1, self.name)
-        keys = pygame.mouse.get_pressed()
-        if keys[0] and self.focused:
-            click_pos = pygame.mouse.get_pos()
-            for button in self.buttons:
-                r = button.check_click(click_pos)
-                if r:
-                    return r
-        elif not keys[0] and (not self.focused):
-            self.focused = True
-            click_pos = pygame.mouse.get_pos()
-            for button in self.buttons:
-                r = button.check_click(click_pos)
-                if r:
-                    return r
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    self.log_in()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click_pos = event.pos
+                    for button in self.buttons:
+                        r = button.check_click(click_pos)
+                        if r:
+                            return r
 
     def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
         text_color:tuple[int, int, int]=(0, 0, 0),
@@ -412,11 +406,10 @@ class LogInScreen:
         try:
             self.inputs[i] = str(js.window.prompt("Enter here:")).strip()
             butt.text = self.inputs[i]
-            self.focused = False
         except AttributeError:
             print('js.window nefunguje')
     
-    async def log_in(self):
+    async def log_in(self): # este sa nedaju robit konta
         if self.score:
             handler = RequestHandler()
             try:
@@ -426,11 +419,7 @@ class LogInScreen:
                 )
                 if response:
                     response_data = json.loads(response)
-                    rank = response_data.get('position')
-                    self.buttons[3].text = f'rank: {rank}'
-                    self.buttons[2].color = (255-255*self.score//response_data.get('max', self.score), 255, 0)
-                    self.buttons[2].hover_color = (max(255-255*self.score//response_data.get('max', self.score), 0), 255, 0)
-                    self.buttons[2].text_color = (min(255*self.score//response_data.get('max', self.score), 255), )*3
+                    return 2
                 else:
                     print("POST Failed")
             except Exception as e:
@@ -494,7 +483,7 @@ class Game:
                             self.menu.leaderboard_menu.draw()
                             continue
                         case 4:
-                            self.menu.log_in_menu = LogInScreen(self.internal_surface, self.s_f, name=self.name)
+                            self.menu.log_in_menu = LogInScreen(self.internal_surface, self.s_f, name=self.menu.name)
                             self.state = 4
                             self.menu.log_in_menu.draw()
                     self.menu.draw()
