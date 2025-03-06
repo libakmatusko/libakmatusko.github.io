@@ -18,7 +18,17 @@ class ScoreEntry(BaseModel):
     score: int
     name: constr(strip_whitespace=True, min_length=1)  # Ensures name is not empty or just whitespace
 
+class SingInData(BaseModel):
+    name: constr(strip_whitespace=True, min_length=1)
+    email: str
+    password: str
+
+class LogInData(BaseModel):
+    loggin: str
+    password: str
+
 LEADERBOARD_FILE = "leaderboard.json"
+USERS_FILE = 'users.json'
 
 def load_data():
     if os.path.exists(LEADERBOARD_FILE):
@@ -34,7 +44,22 @@ def save_data():
     with open(LEADERBOARD_FILE, "w") as f:
         json.dump({"leaderboard": [entry.dict() for entry in leaderboard], "players": players}, f, indent=4)
 
+def load_users():
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, "r") as f:
+            try:
+                data = json.load(f)
+                return data, {v['email']:k for k, v in data.items()}
+            except json.JSONDecodeError:
+                return {}, {}
+    return {}, {}
+
+def save_users():
+    with open(USERS_FILE, "w") as f:
+        json.dump(users, f, indent=4)
+
 leaderboard, players = load_data()
+users, email_to_user = load_users()
 
 @app.get("/")
 def read_root():
@@ -62,6 +87,31 @@ def new_run(entry: ScoreEntry):
     
     save_data()
     return {"message": "Score added", "position": index + 1, 'max':leaderboard[0].score}
+
+@app.post("/sing_in")
+def sing_in(data: SingInData):
+    if (data.email not in email_to_user) and (data.name not in users):
+        users[data.name] = {
+            'email': data.email,
+            'password': data.password,
+            'inventory':{}
+        }
+        email_to_user[data.email] = data.name
+        save_users()
+        return {'message':'New user created'}
+    return {'message':'Username or email not valid or already in use'}
+
+@app.post("/log_in")
+def log_in(data: LogInData):
+    name = email_to_user.get(data.loggin, False)
+    if name == False:
+        name = data.loggin
+    user = users.get(name, False)
+    if user:
+        if user['password'] == data.password:
+            return {'message':'User logged in', 'name':name, 'inventory':user['inventory']}
+        return {'message':'Wrong password'}
+    return {'message':'Invalid username'}
 
 def get_index(name: str):
     for i, ent in enumerate(leaderboard):

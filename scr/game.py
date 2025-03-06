@@ -55,9 +55,9 @@ class Player(pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(power_up, self):
                 if power_up.power == 'coin':
                     power_up.kill()
-                    return (scroll, 500)
+                    return (scroll, 'coin')
 
-        return (scroll, 0)
+        return (scroll, '')
 
 
 class PowerUps (pygame.sprite.Group):
@@ -198,6 +198,8 @@ class EndScreen:
             self.create_button(200, 600, 320, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0), action=lambda: 3)
         self.create_button(230, 700, 260, 100, '', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 0, 0), action=lambda: 3)
         self.create_button(230, 500, 260, 70, 'Log in', self.font, action=lambda: 4)
+        
+        self.inventory = {}
 
         self.data_send()
 
@@ -310,7 +312,7 @@ class LeaderboardScreen:
 
             
             rect = pygame.Rect(231, i*50, 188, 50)
-            pygame.draw.rect(table, self.color if self.name==entry['name'] else (255, 255, 255), rect)
+            pygame.draw.rect(table, self.color if self.name==entry['name'] and self.color != (0, 0, 0) else (255, 255, 255), rect)
             text_surface = self.font.render(f'{entry['score']}', True, (0, 0, 0))
             text_rect = text_surface.get_rect(center=rect.center)
             table.blit(text_surface, text_rect)
@@ -375,16 +377,20 @@ class LogInScreen:
         
         self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 2)
 
+        self.close = False
+
     def draw(self):
-        self.screen.fill((0, 0, 0))  # Black background
+        self.screen.fill((0, 0, 0))  # Black background"
         for button in self.buttons:
             button.draw()
 
     async def update(self):
+        if self.close:
+            return self.close
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    self.log_in()
+                    asyncio.run(self.log_in())
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click_pos = event.pos
@@ -410,23 +416,22 @@ class LogInScreen:
             print('js.window nefunguje')
     
     async def log_in(self): # este sa nedaju robit konta
-        if self.score:
-            handler = RequestHandler()
-            try:
-                response = await handler.post(
-                    r'https://krabica.pythonanywhere.com/new_run',
-                    data={'score':self.score, 'name':self.name}
-                )
-                if response:
-                    response_data = json.loads(response)
-                    return 2
-                else:
-                    print("POST Failed")
-            except Exception as e:
-                print("Failed to post data:", e)
-            print('data fetched')
-        else:
-            print('score is None')
+        handler = RequestHandler()
+        try:
+            response = await handler.post(
+                r'https://krabica.pythonanywhere.com/log_in',
+                data={'loggin':self.inputs[0], 'password':self.inputs[1]}
+            )
+            if response:
+                response_data = json.loads(response)
+                if response_data['message'] == 'User logged in':
+                    self.close = (2, response_data['name'], response_data['inventory'])
+                print(response_data['message'])
+            else:
+                print("POST Failed")
+        except Exception as e:
+            print("Failed to post data:", e)
+        print('data fetched')
 
 
 class Game:
@@ -461,6 +466,7 @@ class Game:
         self.score = 0
         self.font = pygame.font.Font(None, 36)
         self.name = ''
+        self.inventory = {}
 
     async def run(self):
         while True:
@@ -498,6 +504,15 @@ class Game:
                 
                 case 4:
                     match await self.menu.log_in_menu.update():
+                        case (2, name, inventory):
+                            self.name = name
+                            self.menu.name = name
+                            self.menu.buttons[1].text = name
+                            self.inventory = inventory
+                            self.menu.inventory = inventory
+                            self.menu.log_in_menu = None
+                            self.state = 2
+                            continue
                         case 2:
                             self.menu.log_in_menu = None
                             self.state = 2
@@ -521,7 +536,9 @@ class Game:
 
     async def update(self):
         scroll, bonus = self.player.update(platforms=self.platforms, power_ups=self.power_ups, s_f=self.s_f)
-        self.score += bonus
+        if bonus == 'coin':
+            self.score += 500
+            self.add('coin', 1)
         self.platforms.update(scroll_lenght=scroll, s_height=SCREEN_HEIGHT)
         self.power_ups.update(scroll_lenght=scroll, s_height=SCREEN_HEIGHT)
         self.score += scroll
@@ -563,4 +580,9 @@ class Game:
         
 
         self.state = 2
-        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, name=self.name)
+        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, name=self.name, )
+    
+    def add(self, item, count):
+        if item in self.inventory:
+            self.inventory[item] += count
+        self.inventory[item] = count
