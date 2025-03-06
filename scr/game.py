@@ -180,7 +180,7 @@ class Button:
     
 
 class EndScreen:
-    def __init__(self, screen, s_f, score=None, name='Meno...'):
+    def __init__(self, screen, s_f, score=None, name='Meno...', inventory={}, logged=False):
         self.score = score
         self.screen = screen
         self.s_f = s_f
@@ -189,15 +189,18 @@ class EndScreen:
         self.buttons = []
         self.leaderboard_menu = None
         self.log_in_menu = None
+        self.inventory = inventory
+        self.logged = logged
 
         self.focused = True
 
-        self.create_button(230, 900, 260, 70, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: (1, self.name))
+        self.create_button(230, 900, 260, 70, 'Play again', self.font, hover_color=(255, 0, 0), action=lambda: (1, self.name, self.inventory, self.logged))
         self.create_button(200, 400, 320, 70, self.name, self.font, action=self.js_input)
         if score:
             self.create_button(200, 600, 320, 100, f'Score: {score}', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 255, 0), action=lambda: 3)
         self.create_button(230, 700, 260, 100, '', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 0, 0), action=lambda: 3)
         self.create_button(230, 500, 260, 70, 'Log in', self.font, action=lambda: 4)
+        self.create_button(10, 10, 280, 100, 'Inventory', pygame.font.Font(None, 72), color=(121, 85, 72), action=lambda: 5)
         
         self.inventory = {}
 
@@ -210,7 +213,7 @@ class EndScreen:
 
     async def update(self):
         if pygame.key.get_pressed()[pygame.K_RETURN]:
-            return (1, self.name)
+            return (1, self.name, self.inventory, self.logged)
         keys = pygame.mouse.get_pressed()
         if keys[0] and self.focused:
             click_pos = pygame.mouse.get_pos()
@@ -235,6 +238,8 @@ class EndScreen:
         self.buttons.append(Button(self.screen, self.s_f, x, y, width, height, text, font,text_color, color, hover_color, action))
 
     def js_input(self):
+        if self.logged:
+            return
         butt = self.buttons[1] #lebo pole s menom vytvaram ako druhe ale je to konkretny nie vseobecny pristup
         try:
             self.name = str(js.window.prompt("Enter your name:")).strip()
@@ -467,6 +472,7 @@ class Game:
         self.font = pygame.font.Font(None, 36)
         self.name = ''
         self.inventory = {}
+        self.logged = False
 
     async def run(self):
         while True:
@@ -480,8 +486,8 @@ class Game:
 
                 case 2 if self.menu != None:
                     match await self.menu.update():
-                        case (1, name):
-                            self.re_init(name=name)
+                        case (1, name, inventory, logged):
+                            self.re_init(name, inventory, logged)
                             continue
                         case 3:
                             self.menu.leaderboard_menu = LeaderboardScreen(self.internal_surface, self.s_f, self.name, self.menu.buttons[2].color)
@@ -508,10 +514,12 @@ class Game:
                             self.name = name
                             self.menu.name = name
                             self.menu.buttons[1].text = name
+                            self.menu.buttons[1].action = None
                             self.inventory = inventory
                             self.menu.inventory = inventory
                             self.menu.log_in_menu = None
                             self.state = 2
+                            self.menu.logged = True
                             continue
                         case 2:
                             self.menu.log_in_menu = None
@@ -520,7 +528,7 @@ class Game:
                     self.menu.log_in_menu.draw()
 
                 case _:
-                    Exception('game state not valid')
+                    print('game state not valid')
             scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
             self.screen.blit(scaled_surface, (0, 0))
             pygame.display.flip()
@@ -554,7 +562,10 @@ class Game:
 
         self.internal_surface.blit(self.font.render(f"Score: {self.score-(pygame.time.get_ticks()-self.timer)//200}", True, (255, 255, 255)), (10, 10))
     
-    def re_init(self, name):
+    def re_init(self, name, inventory, logged):
+        self.inventory = inventory
+        self.logged = logged
+
         self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
         self.objects = pygame.sprite.Group()
         self.objects.add(self.player)
@@ -577,12 +588,29 @@ class Game:
         for platform in self.platforms:
             platform.kill()
 
-        
+        self.loop = asyncio.get_event_loop()
+        self.loop.create_task(self.inventory_send())
 
         self.state = 2
-        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, name=self.name, )
+        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, name=self.name, inventory=self.inventory, logged=self.logged)
     
     def add(self, item, count):
         if item in self.inventory:
             self.inventory[item] += count
         self.inventory[item] = count
+
+    async def inventory_send(self):
+        print(self.logged)
+        if self.logged:
+            handler = RequestHandler()
+            try:
+                response = await handler.post(
+                    f'https://krabica.pythonanywhere.com/update/{self.name}',
+                    data=self.inventory
+                )
+                if response:
+                    pass
+                else:
+                    print("POST Failed")
+            except Exception as e:
+                print("Failed to post data:", e)

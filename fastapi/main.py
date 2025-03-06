@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel, constr
 from bisect import bisect_right
 from fastapi.middleware.cors import CORSMiddleware
@@ -56,6 +56,7 @@ def load_users():
 
 def save_users():
     with open(USERS_FILE, "w") as f:
+        print(users)
         json.dump(users, f, indent=4)
 
 leaderboard, players = load_data()
@@ -94,7 +95,7 @@ def sing_in(data: SingInData):
         users[data.name] = {
             'email': data.email,
             'password': data.password,
-            'inventory':{}
+            'inventory':{'coin':0}
         }
         email_to_user[data.email] = data.name
         save_users()
@@ -111,6 +112,15 @@ def log_in(data: LogInData):
         if user['password'] == data.password:
             return {'message':'User logged in', 'name':name, 'inventory':user['inventory']}
         return {'message':'Wrong password'}
+    return {'message':'Invalid username'}
+
+@app.post('/update/{user}')
+async def update_user(user: str, request: Request):
+    data = await request.json()
+    if user in users:
+        users[user]['inventory'] = data
+        save_users()
+        return {'message':'Inventory updated'}
     return {'message':'Invalid username'}
 
 def get_index(name: str):
