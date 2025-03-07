@@ -439,6 +439,78 @@ class LogInScreen:
         print('data fetched')
 
 
+class InventoryScreen:
+    def __init__(self, screen, s_f, name, inventory):
+        self.screen = screen
+        self.s_f = s_f
+        self.font = pygame.font.Font(None, 54)
+        self.inputs = ['meno/email' if name in ('Meno...', '') else name, 'heslo']
+        self.buttons = []
+
+        self.create_button(200, 400, 320, 100, self.inputs[0], self.font, action=lambda: self.js_input(0))
+        self.create_button(200, 550, 320, 100, self.inputs[1], self.font, action=lambda: self.js_input(1))
+        self.create_button(200, 750, 320, 100, 'LOG IN', self.font, color=(118, 255, 3), action=lambda: asyncio.run(self.log_in()))
+        self.create_button(200, 900, 320, 100, 'SIGN IN', self.font, color=(29, 233, 182), action=lambda: js.window.open(r'https://libakmatusko.github.io/sing_in', "_blank"))
+        
+        self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 2)
+
+        self.close = False
+
+    def draw(self):
+        self.screen.fill((0, 0, 0))  # Black background"
+        for button in self.buttons:
+            button.draw()
+
+    async def update(self):
+        if self.close:
+            return self.close
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    asyncio.run(self.log_in())
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click_pos = event.pos
+                    for button in self.buttons:
+                        r = button.check_click(click_pos)
+                        if r:
+                            return r
+
+    def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
+        text_color:tuple[int, int, int]=(0, 0, 0),
+        color:tuple[int, int, int]=(255, 255, 255),
+        hover_color:Union[None, tuple[int, int, int]]=None,
+        action=None
+    ):
+        self.buttons.append(Button(self.screen, self.s_f, x, y, width, height, text, font,text_color, color, hover_color, action))
+
+    def js_input(self, i):
+        butt = self.buttons[i] #lebo pole s menom vytvaram ako druhe ale je to konkretny nie vseobecny pristup
+        try:
+            self.inputs[i] = str(js.window.prompt("Enter here:")).strip()
+            butt.text = self.inputs[i]
+        except AttributeError:
+            print('js.window nefunguje')
+    
+    async def log_in(self): # este sa nedaju robit konta
+        handler = RequestHandler()
+        try:
+            response = await handler.post(
+                r'https://krabica.pythonanywhere.com/log_in',
+                data={'loggin':self.inputs[0], 'password':self.inputs[1]}
+            )
+            if response:
+                response_data = json.loads(response)
+                if response_data['message'] == 'User logged in':
+                    self.close = (2, response_data['name'], response_data['inventory'])
+                print(response_data['message'])
+            else:
+                print("POST Failed")
+        except Exception as e:
+            print("Failed to post data:", e)
+        print('data fetched')
+
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -597,7 +669,8 @@ class Game:
     def add(self, item, count):
         if item in self.inventory:
             self.inventory[item] += count
-        self.inventory[item] = count
+        else:
+            self.inventory[item] = count
 
     async def inventory_send(self):
         print(self.logged)
