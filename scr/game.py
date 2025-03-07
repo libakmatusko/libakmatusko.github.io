@@ -420,7 +420,7 @@ class LogInScreen:
         except AttributeError:
             print('js.window nefunguje')
     
-    async def log_in(self): # este sa nedaju robit konta
+    async def log_in(self):
         handler = RequestHandler()
         try:
             response = await handler.post(
@@ -444,17 +444,13 @@ class InventoryScreen:
         self.screen = screen
         self.s_f = s_f
         self.font = pygame.font.Font(None, 54)
-        self.inputs = ['meno/email' if name in ('Meno...', '') else name, 'heslo']
+        self.inputs = []
         self.buttons = []
 
-        self.create_button(200, 400, 320, 100, self.inputs[0], self.font, action=lambda: self.js_input(0))
-        self.create_button(200, 550, 320, 100, self.inputs[1], self.font, action=lambda: self.js_input(1))
-        self.create_button(200, 750, 320, 100, 'LOG IN', self.font, color=(118, 255, 3), action=lambda: asyncio.run(self.log_in()))
-        self.create_button(200, 900, 320, 100, 'SIGN IN', self.font, color=(29, 233, 182), action=lambda: js.window.open(r'https://libakmatusko.github.io/sing_in', "_blank"))
+        self.create_button(100, 400, 540, 100, str(inventory), self.font)
         
         self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 2)
 
-        self.close = False
 
     def draw(self):
         self.screen.fill((0, 0, 0))  # Black background"
@@ -462,12 +458,7 @@ class InventoryScreen:
             button.draw()
 
     async def update(self):
-        if self.close:
-            return self.close
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    asyncio.run(self.log_in())
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click_pos = event.pos
@@ -570,6 +561,10 @@ class Game:
                             self.menu.log_in_menu = LogInScreen(self.internal_surface, self.s_f, name=self.menu.name)
                             self.state = 4
                             self.menu.log_in_menu.draw()
+                        case 5:
+                            self.menu.inventory_menu = InventoryScreen(self.internal_surface, self.s_f, self.name, self.inventory)
+                            self.state = 5
+                            self.menu.inventory_menu.draw()
                     self.menu.draw()
                     
                 case 3:
@@ -598,7 +593,13 @@ class Game:
                             self.state = 2
                             continue
                     self.menu.log_in_menu.draw()
-
+                case 5:
+                    match await self.menu.inventory_menu.update():
+                        case 2:
+                            self.menu.inventory_menu = None
+                            self.state = 2
+                            continue
+                    self.menu.inventory_menu.draw()
                 case _:
                     print('game state not valid')
             scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
