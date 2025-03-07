@@ -201,8 +201,6 @@ class EndScreen:
         self.create_button(230, 700, 260, 100, '', pygame.font.Font(None, 72), text_color=(255, 255, 255), color=(0, 0, 0), action=lambda: 3)
         self.create_button(230, 500, 260, 70, 'Log in', self.font, action=lambda: 4)
         self.create_button(10, 10, 280, 100, 'Inventory', pygame.font.Font(None, 72), color=(121, 85, 72), action=lambda: 5)
-        
-        self.inventory = {}
 
         self.data_send()
 
