@@ -287,6 +287,8 @@ class LeaderboardScreen:
         self.leaderboard = [{'name':'. . .', 'score':-1}]
         self.font = pygame.font.Font(None, 36)
 
+        self.dragging = 0
+
         self.create_button(150, 70, 40, 70, '#', pygame.font.Font(None, 54))
         self.create_button(190, 70, 190, 70, 'Name', pygame.font.Font(None, 54))
         self.create_button(380, 70, 190, 70, 'Score', pygame.font.Font(None, 54))
@@ -328,6 +330,13 @@ class LeaderboardScreen:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEWHEEL:
                 self.scrolled -= event.y*15
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.dragging = event.pos[1]
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.dragging = 0
+            elif event.type == pygame.MOUSEMOTION and self.dragging:
+               self.scrolled += (self.dragging - event.pos[1])*2
+               self.dragging = event.pos[1]
         self.scrolled = max(min((len(self.leaderboard)-20)*50, self.scrolled), 0)
 
         keys = pygame.mouse.get_pressed()
