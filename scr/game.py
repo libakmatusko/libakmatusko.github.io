@@ -448,19 +448,35 @@ class LogInScreen:
 
 class InventoryScreen:
     def __init__(self, screen, s_f, name, inventory):
+        self.name = name
+        self.inventory = inventory
         self.screen = screen
         self.s_f = s_f
         self.font = pygame.font.Font(None, 54)
-        self.inputs = []
         self.buttons = []
+        self.select_buttons = {}
+        for k, v in inventory.items():
+            if k != 'coin':
+                self.select_buttons[k] = []
+                for i, farba in enumerate(v):
+                    self.select_buttons[k].append(
+                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=tuple(farba), action=lambda: tuple(farba))
+                    )
+        self.selecting = None
 
-        self.create_button(100, 400, 540, 100, str(inventory), self.font)
+        #self.create_button(100, 400, 540, 100, str(inventory), self.font)
         
         self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 2)
+        self.create_button(10, 10, 200, 40, f'coins: {inventory.get('coin', 0)}', self.font, text_color=(255, 171, 0), color=(78, 52, 46))
+        self.create_button(230, 250, 260, 50, 'Not selected', self.font, text_color=(255, 255, 255), color=(0, 0, 0))
 
+        self.create_button(60, 100, 200, 100, 'Player', self.font, action=lambda: self.select('Player'))
 
     def draw(self):
-        self.screen.fill((0, 0, 0))  # Black background"
+        self.screen.fill((0, 0, 0))
+        for butt in self.select_buttons.get(self.selecting, []):
+            butt.draw()
+
         for button in self.buttons:
             button.draw()
 
@@ -473,6 +489,9 @@ class InventoryScreen:
                         r = button.check_click(click_pos)
                         if r:
                             return r
+                    for butt in self.select_buttons.get(self.selecting, []):
+                        # = butt.check_click(click_pos)      TU TREBA DOROBIT ABY TENTO TUPLE POSIELALO A MENILO VECI
+                        continue
 
     def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
         text_color:tuple[int, int, int]=(0, 0, 0),
@@ -482,32 +501,9 @@ class InventoryScreen:
     ):
         self.buttons.append(Button(self.screen, self.s_f, x, y, width, height, text, font,text_color, color, hover_color, action))
 
-    def js_input(self, i):
-        butt = self.buttons[i] #lebo pole s menom vytvaram ako druhe ale je to konkretny nie vseobecny pristup
-        try:
-            self.inputs[i] = str(js.window.prompt("Enter here:")).strip()
-            butt.text = self.inputs[i]
-        except AttributeError:
-            print('js.window nefunguje')
-    
-    async def log_in(self): # este sa nedaju robit konta
-        handler = RequestHandler()
-        try:
-            response = await handler.post(
-                r'https://krabica.pythonanywhere.com/log_in',
-                data={'loggin':self.inputs[0], 'password':self.inputs[1]}
-            )
-            if response:
-                response_data = json.loads(response)
-                if response_data['message'] == 'User logged in':
-                    self.close = (2, response_data['name'], response_data['inventory'])
-                print(response_data['message'])
-            else:
-                print("POST Failed")
-        except Exception as e:
-            print("Failed to post data:", e)
-        print('data fetched')
-
+    def select(self, select):
+        self.selecting = select
+        self.buttons[2].text = f'Slected: {select}'
 
 class Game:
     def __init__(self):
