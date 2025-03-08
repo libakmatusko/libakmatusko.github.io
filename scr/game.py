@@ -545,7 +545,7 @@ class Game:
         pygame.display.set_caption("Scaled Game Window")
         self.internal_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        self.vis = {'color': (0, 0, 255), 'image':'trans_cat.png'}
+        self.vis = {'color': (0, 0, 255), 'image': None}
         self.menu = EndScreen(self.internal_surface, self.s_f, self.vis)
 
         self.clock = pygame.time.Clock()
