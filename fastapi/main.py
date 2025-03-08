@@ -56,7 +56,6 @@ def load_users():
 
 def save_users():
     with open(USERS_FILE, "w") as f:
-        print(users)
         json.dump(users, f, indent=4)
 
 leaderboard, players = load_data()
@@ -95,7 +94,7 @@ def sing_in(data: SingInData):
         users[data.name] = {
             'email': data.email,
             'password': data.password,
-            'inventory':{'coin':0, 'Player':[0, 0, 255]}
+            'inventory':{'coin':0, 'Player':[[0, 0, 255]]}
         }
         email_to_user[data.email] = data.name
         save_users()

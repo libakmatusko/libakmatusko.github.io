@@ -465,14 +465,16 @@ class InventoryScreen:
             if k != 'coin':
                 self.select_buttons[k] = []
                 for i, farba in enumerate(v):
-                    if type(farba) == type([]):
+                    if type(farba) == list:
+                        farba = tuple(farba)
                         self.select_buttons[k].append(
-                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=tuple(farba), action=lambda: self.change_player(farba))
+                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=farba, action=self.return_lambda(farba))
                         )
-                    elif type(farba) == type(''):
+                    elif type(farba) == str:
                         self.select_buttons[k].append(
-                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba, self.font, action=lambda: self.change_player(farba))
+                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba, self.font, action=lambda: self.return_lambda(farba))
                         )
+
         self.selecting = None
 
         #self.create_button(100, 400, 540, 100, str(inventory), self.font)
@@ -502,7 +504,6 @@ class InventoryScreen:
                             return r
                     for butt in self.select_buttons.get(self.selecting, []):
                         butt.check_click(click_pos)
-                        print(butt.color)
                         continue
 
     def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
@@ -519,13 +520,15 @@ class InventoryScreen:
     
     def change_player(self, change):
         print(change)
-        if type(change) == type([]):
-            self.vis['color'] = tuple(change)
+        if type(change) == tuple:
+            self.vis['color'] = change
             self.vis['image'] = None
-        elif type(change) == type(''):
+        elif type(change) == str:
             self.vis['image'] = change
         print(self.vis)
-            
+
+    def return_lambda(self, value):
+        return lambda: self.change_player(value)
 
 class Game:
     def __init__(self):
