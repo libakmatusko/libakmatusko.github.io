@@ -18,10 +18,14 @@ PLAYER_SPEED = 5
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, color, image):
+        print(color, image)
         super().__init__()
-        self.image = pygame.Surface((50, 50))  # Rectangle shape
-        self.image.fill((0, 0, 255))
+        if image:
+            self.image = pygame.transform.scale(pygame.image.load(f'assets/{image}'), (50, 50))
+        elif color:
+            self.image = pygame.Surface((50, 50))  # Rectangle shape
+            self.image.fill(color)
         self.rect = self.image.get_rect(center=(x, y))
         self.vertical_v = 0 #vertical veliocity for jumping and falling + for down, - for up
 
@@ -180,7 +184,7 @@ class Button:
     
 
 class EndScreen:
-    def __init__(self, screen, s_f, score=None, name='Meno...', inventory={}, logged=False):
+    def __init__(self, screen, s_f, vis, score=None, name='Meno...', inventory={}, logged=False):
         self.score = score
         self.screen = screen
         self.s_f = s_f
@@ -191,6 +195,7 @@ class EndScreen:
         self.log_in_menu = None
         self.inventory = inventory
         self.logged = logged
+        self.vis = vis
 
         self.focused = True
 
@@ -447,21 +452,27 @@ class LogInScreen:
 
 
 class InventoryScreen:
-    def __init__(self, screen, s_f, name, inventory):
+    def __init__(self, screen, s_f, name, inventory, vis):
         self.name = name
         self.inventory = inventory
         self.screen = screen
         self.s_f = s_f
-        self.font = pygame.font.Font(None, 54)
+        self.font = pygame.font.Font(None, 36)
         self.buttons = []
+        self.vis = vis
         self.select_buttons = {}
         for k, v in inventory.items():
             if k != 'coin':
                 self.select_buttons[k] = []
                 for i, farba in enumerate(v):
-                    self.select_buttons[k].append(
-                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=tuple(farba), action=lambda: tuple(farba))
-                    )
+                    if type(farba) == type([]):
+                        self.select_buttons[k].append(
+                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=tuple(farba), action=lambda: self.change_player(farba))
+                        )
+                    elif type(farba) == type(''):
+                        self.select_buttons[k].append(
+                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba, self.font, action=lambda: self.change_player(farba))
+                        )
         self.selecting = None
 
         #self.create_button(100, 400, 540, 100, str(inventory), self.font)
@@ -490,7 +501,8 @@ class InventoryScreen:
                         if r:
                             return r
                     for butt in self.select_buttons.get(self.selecting, []):
-                        # = butt.check_click(click_pos)      TU TREBA DOROBIT ABY TENTO TUPLE POSIELALO A MENILO VECI
+                        butt.check_click(click_pos)
+                        print(butt.color)
                         continue
 
     def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
@@ -504,6 +516,16 @@ class InventoryScreen:
     def select(self, select):
         self.selecting = select
         self.buttons[2].text = f'Slected: {select}'
+    
+    def change_player(self, change):
+        print(change)
+        if type(change) == type([]):
+            self.vis['color'] = tuple(change)
+            self.vis['image'] = None
+        elif type(change) == type(''):
+            self.vis['image'] = change
+        print(self.vis)
+            
 
 class Game:
     def __init__(self):
@@ -520,12 +542,13 @@ class Game:
         pygame.display.set_caption("Scaled Game Window")
         self.internal_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        self.menu = EndScreen(self.internal_surface, self.s_f)
+        self.vis = {'color': (0, 0, 255), 'image':'trans_cat.png'}
+        self.menu = EndScreen(self.internal_surface, self.s_f, self.vis)
 
         self.clock = pygame.time.Clock()
         self.timer = 0
 
-        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, **self.vis)
         self.objects = pygame.sprite.Group()
         self.objects.add(self.player)
 
@@ -565,7 +588,7 @@ class Game:
                             self.state = 4
                             self.menu.log_in_menu.draw()
                         case 5:
-                            self.menu.inventory_menu = InventoryScreen(self.internal_surface, self.s_f, self.name, self.inventory)
+                            self.menu.inventory_menu = InventoryScreen(self.internal_surface, self.s_f, self.name, self.inventory, self.vis)
                             self.state = 5
                             self.menu.inventory_menu.draw()
                     self.menu.draw()
@@ -642,7 +665,7 @@ class Game:
         self.inventory = inventory
         self.logged = logged
 
-        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, **self.vis)
         self.objects = pygame.sprite.Group()
         self.objects.add(self.player)
 
@@ -668,7 +691,7 @@ class Game:
         self.loop.create_task(self.inventory_send())
 
         self.state = 2
-        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, name=self.name, inventory=self.inventory, logged=self.logged)
+        self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, name=self.name, inventory=self.inventory, logged=self.logged, vis=self.vis)
     
     def add(self, item, count):
         if item in self.inventory:

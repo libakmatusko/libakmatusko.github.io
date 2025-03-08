@@ -95,7 +95,7 @@ def sing_in(data: SingInData):
         users[data.name] = {
             'email': data.email,
             'password': data.password,
-            'inventory':{'coin':0}
+            'inventory':{'coin':0, 'Player':[0, 0, 255]}
         }
         email_to_user[data.email] = data.name
         save_users()
