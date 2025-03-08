@@ -472,7 +472,7 @@ class InventoryScreen:
                         )
                     elif type(farba) == str:
                         self.select_buttons[k].append(
-                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba, self.font, action=lambda: self.return_lambda(farba))
+                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba, self.font, action=self.return_lambda(farba))
                         )
 
         self.selecting = None
