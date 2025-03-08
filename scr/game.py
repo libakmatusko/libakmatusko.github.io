@@ -413,8 +413,11 @@ class LogInScreen:
                     click_pos = event.pos
                     for button in self.buttons:
                         r = button.check_click(click_pos)
-                        if r:
-                            return r
+                        try:
+                            if r:
+                                return r
+                        except:
+                            pass
 
     def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
         text_color:tuple[int, int, int]=(0, 0, 0),
@@ -542,7 +545,7 @@ class Game:
         self.s_f = min(screen_height/SCREEN_HEIGHT, screen_width/SCREEN_WIDTH) * 0.90 #only in rendering
 
         self.screen = pygame.display.set_mode((SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f), pygame.RESIZABLE)
-        pygame.display.set_caption("Scaled Game Window")
+        pygame.display.set_caption("The time killer")
         self.internal_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 
         self.vis = {'color': (0, 0, 255), 'image': None}
