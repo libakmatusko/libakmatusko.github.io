@@ -455,7 +455,7 @@ class LogInScreen:
 
 
 class InventoryScreen:
-    def __init__(self, screen, s_f, name, inventory, vis):
+    def __init__(self, screen, s_f, name, inventory, vis, logged):
         self.name = name
         self.inventory = inventory
         self.screen = screen
@@ -463,7 +463,18 @@ class InventoryScreen:
         self.font = pygame.font.Font(None, 36)
         self.buttons = []
         self.vis = vis
-        self.select_buttons = {}
+        self.logged = logged
+        self.select_buttons = {'All':[]}
+        self.all_skins = [
+            [255, 0, 0],
+            [0, 255, 0],
+            [0, 0, 255],
+            [255, 255, 0],
+            [255, 0, 255],
+            [0, 255, 255],
+            [255, 255, 255],
+            'cat.png'
+        ]
         for k, v in inventory.items():
             if k != 'coin':
                 self.select_buttons[k] = []
@@ -471,14 +482,35 @@ class InventoryScreen:
                     if type(farba) == list:
                         farba = tuple(farba)
                         self.select_buttons[k].append(
-                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=farba, action=self.return_lambda(farba))
+                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=farba, action=self.return_change(farba))
                         )
                     elif type(farba) == str:
                         self.select_buttons[k].append(
-                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba, self.font, action=self.return_lambda(farba))
+                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba[0:-4], self.font, action=self.return_change(farba))
                         )
+        for i, farba in enumerate(self.all_skins):
+            if farba in inventory.get('Player', []):
+                if type(farba) == list:
+                    farba = tuple(farba)
+                    self.select_buttons['All'].append(
+                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=farba)
+                    )
+                elif type(farba) == str:
+                    self.select_buttons['All'].append(
+                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba[0:-4], self.font)
+                    )
+            else:
+                if type(farba) == list:
+                    farba = tuple(farba)
+                    self.select_buttons['All'].append(
+                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, f'{sum(farba)//10}', self.font, color=farba, text_color=(0, 0, 0) if sum(farba)>200 else (255, 255, 255), action=self.return_buy(farba, sum(farba)//10))
+                    )
+                elif type(farba) == str:
+                    self.select_buttons['All'].append(
+                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, f'{farba[0:-4]}\n{len(farba)*20}', self.font, action=self.return_buy(farba, len(farba)*20))
+                    )
 
-        self.selecting = None
+        self.selecting = 'All'
 
         #self.create_button(100, 400, 540, 100, str(inventory), self.font)
         
@@ -487,6 +519,7 @@ class InventoryScreen:
         self.create_button(230, 250, 260, 50, 'Not selected', self.font, text_color=(255, 255, 255), color=(0, 0, 0))
 
         self.create_button(60, 100, 200, 100, 'Player', self.font, action=lambda: self.select('Player'))
+        self.create_button(460, 100, 200, 100, 'All', self.font, action=lambda: self.select('All'))
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -519,7 +552,7 @@ class InventoryScreen:
 
     def select(self, select):
         self.selecting = select
-        self.buttons[2].text = f'Slected: {select}'
+        self.buttons[2].text = f'Selecting: {select}'
     
     def change_player(self, change):
         print(change)
@@ -530,8 +563,40 @@ class InventoryScreen:
             self.vis['image'] = change
         print(self.vis)
 
-    def return_lambda(self, value):
+    def return_change(self, value):
         return lambda: self.change_player(value)
+
+    def buy(self, skin, price):
+        if self.logged and self.inventory.get('coin', 0) >= price:
+            self.inventory['coin'] -= price
+            if type(skin)==str:
+                self.inventory['Player'].append(skin)
+            else:
+                self.inventory['Player'].append(list(skin))
+
+            loop = asyncio.get_event_loop()         #tu som vymazal self.
+            loop.create_task(self.inventory_send()) #tu som vymazal self.
+            
+            self.__init__(self.screen, self.s_f, self.name, self.inventory, self.vis, self.logged)
+    
+    def return_buy(self, skin, price):
+        return lambda: self.buy(skin, price)
+    
+    async def inventory_send(self):
+        if self.logged:
+            handler = RequestHandler()
+            try:
+                response = await handler.post(
+                    f'https://krabica.pythonanywhere.com/update/{self.name}',
+                    data=self.inventory
+                )
+                if response:
+                    print('Bought')
+                else:
+                    print("POST Failed")
+            except Exception as e:
+                print("Failed to post data:", e)
+
 
 class Game:
     def __init__(self):
@@ -594,7 +659,7 @@ class Game:
                             self.state = 4
                             self.menu.log_in_menu.draw()
                         case 5:
-                            self.menu.inventory_menu = InventoryScreen(self.internal_surface, self.s_f, self.name, self.inventory, self.vis)
+                            self.menu.inventory_menu = InventoryScreen(self.internal_surface, self.s_f, self.name, self.inventory, self.vis, self.logged)
                             self.state = 5
                             self.menu.inventory_menu.draw()
                     self.menu.draw()
@@ -618,6 +683,7 @@ class Game:
                             self.menu.inventory = inventory
                             self.menu.log_in_menu = None
                             self.state = 2
+                            self.logged = True
                             self.menu.logged = True
                             continue
                         case 2:
@@ -693,8 +759,8 @@ class Game:
         for platform in self.platforms:
             platform.kill()
 
-        self.loop = asyncio.get_event_loop()
-        self.loop.create_task(self.inventory_send())
+        loop = asyncio.get_event_loop()         #tu som vymazal self.
+        loop.create_task(self.inventory_send()) #tu som vymazal self.
 
         self.state = 2
         self.menu = EndScreen(self.internal_surface, self.s_f, score=self.score, name=self.name, inventory=self.inventory, logged=self.logged, vis=self.vis)
