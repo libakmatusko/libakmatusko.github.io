@@ -469,11 +469,13 @@ class InventoryScreen:
             [255, 0, 0],
             [0, 255, 0],
             [0, 0, 255],
-            [255, 255, 0],
+            [255, 215, 0],
             [255, 0, 255],
             [0, 255, 255],
             [255, 255, 255],
-            'cat.png'
+            'cat.png',
+            'UPJS.png',
+            'CuteFrog.png'
         ]
         for k, v in inventory.items():
             if k != 'coin':
@@ -482,32 +484,32 @@ class InventoryScreen:
                     if type(farba) == list:
                         farba = tuple(farba)
                         self.select_buttons[k].append(
-                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=farba, action=self.return_change(farba))
+                            Button(self.screen, self.s_f, 24+(i%4)*174, 350+(i//4)*120, 150, 100, '', self.font, color=farba, action=self.return_change(farba))
                         )
                     elif type(farba) == str:
                         self.select_buttons[k].append(
-                            Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba[0:-4], self.font, action=self.return_change(farba))
+                            Button(self.screen, self.s_f, 24+(i%4)*174, 350+(i//4)*120, 150, 100, farba[0:-4], self.font, action=self.return_change(farba))
                         )
         for i, farba in enumerate(self.all_skins):
             if farba in inventory.get('Player', []):
                 if type(farba) == list:
                     farba = tuple(farba)
                     self.select_buttons['All'].append(
-                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, '', self.font, color=farba)
+                        Button(self.screen, self.s_f, 24+(i%4)*174, 350+(i//4)*120, 150, 100, '', self.font, color=farba)
                     )
                 elif type(farba) == str:
                     self.select_buttons['All'].append(
-                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, farba[0:-4], self.font)
+                        Button(self.screen, self.s_f, 24+(i%4)*174, 350+(i//4)*120, 150, 100, farba[0:-4], self.font)
                     )
             else:
                 if type(farba) == list:
                     farba = tuple(farba)
                     self.select_buttons['All'].append(
-                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, f'{sum(farba)//10}', self.font, color=farba, text_color=(0, 0, 0) if sum(farba)>200 else (255, 255, 255), action=self.return_buy(farba, sum(farba)//10))
+                        Button(self.screen, self.s_f, 24+(i%4)*174, 350+(i//4)*120, 150, 100, f'{sum(farba)//10}', self.font, color=farba, text_color=(0, 0, 0) if sum(farba)>220 else (255, 255, 255), action=self.return_buy(farba, sum(farba)//10))
                     )
                 elif type(farba) == str:
                     self.select_buttons['All'].append(
-                        Button(self.screen, self.s_f, 20+(i%5)*120, 350+(i//5)*120, 100, 100, f'{farba[0:-4]}\n{len(farba)*20}', self.font, action=self.return_buy(farba, len(farba)*20))
+                        Button(self.screen, self.s_f, 24+(i%4)*174, 350+(i//4)*120, 150, 100, f'{farba[0:-4]}\n{len(farba)*20}', self.font, action=self.return_buy(farba, len(farba)*20))
                     )
 
         self.selecting = 'All'
@@ -613,7 +615,7 @@ class Game:
         pygame.display.set_caption("The time killer")
         self.internal_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        self.vis = {'color': (0, 0, 255), 'image': None}
+        self.vis = {'color': (0, 0, 255), 'image': 'CuteFrog.png'}
         self.menu = EndScreen(self.internal_surface, self.s_f, self.vis)
 
         self.clock = pygame.time.Clock()
