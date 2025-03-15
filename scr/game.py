@@ -466,10 +466,16 @@ class InventoryScreen:
         self.logged = logged
         self.select_buttons = {'All':[]}
         self.all_skins = [
+            [78, 52, 46],
             [255, 0, 0],
             [0, 255, 0],
             [0, 0, 255],
+            [197, 17, 98],
+            [63, 81, 181],
+            [244, 81, 30],
+            [158, 158, 158],
             [255, 215, 0],
+            [174, 234, 0],
             [255, 0, 255],
             [0, 255, 255],
             [255, 255, 255],
@@ -615,7 +621,7 @@ class Game:
         pygame.display.set_caption("The time killer")
         self.internal_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        self.vis = {'color': (0, 0, 255), 'image': 'CuteFrog.png'}
+        self.vis = {'color': (0, 0, 255), 'image': None}
         self.menu = EndScreen(self.internal_surface, self.s_f, self.vis)
 
         self.clock = pygame.time.Clock()
