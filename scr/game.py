@@ -63,16 +63,17 @@ class Player(pygame.sprite.Sprite):
 
 
 class PowerUps (pygame.sprite.Group):
-    def __init__(self, s_width:int=720):
+    def __init__(self, s_width:int=720, coin_spawn=2550):
         super().__init__()
         self.s_width = s_width
         self.scrolled = 0
         self.score = 0
+        self.coin_spawn = coin_spawn
 
     def update(self, scroll_lenght:int=0, s_height:int=128):
         self.scrolled += scroll_lenght
-        if self.scrolled >= 2550:
-            self.scrolled -= 2550
+        if self.scrolled >= self.coin_spawn:
+            self.scrolled -= self.coin_spawn
             self.add(Coin(random.randint(25, 695), -200+self.scrolled))
 
         for sprite in self.sprites():
@@ -626,6 +627,10 @@ class UpgradeScreen:
         self.create_button(50, 200, 185, 50, f'Speed: {inventory["Upgrades"]['speed']}', self.font)
         self.create_button(285, 200, 150, 50, '+1', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy('speed'))
         self.create_button(485, 200, 185, 50, f'price: {self.price('speed')}', self.font, text_color=(255, 171, 0), color=(78, 52, 46))
+
+        self.create_button(50, 300, 185, 50, f'Coins: {(2650-inventory["Upgrades"].get("coin_spawn", 2550))//100}', self.font)
+        self.create_button(285, 300, 150, 50, '-100', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy("coin_spawn"))
+        self.create_button(485, 300, 185, 50, f'price: {self.price("coin_spawn")}', self.font, text_color=(255, 171, 0), color=(78, 52, 46))
     
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -655,11 +660,16 @@ class UpgradeScreen:
             return self.inventory["Upgrades"]['jump']*2//5*5
         elif stat == "speed":
             return (self.inventory["Upgrades"]['speed']-3)*50
+        elif stat == "coin_spawn":
+            return int(1_000_000 / max(1, (self.inventory["Upgrades"].get("coin_spawn", 2550))**1.2))
 
     def buy(self, stat):
         if self.logged and self.inventory.get('coin', 0) >= self.price(stat):
             self.inventory['coin'] -= self.price(stat)
-            self.inventory['Upgrades'][stat] += 1
+            if stat in ('jump', 'speed'):
+                self.inventory['Upgrades'][stat] += 1
+            elif stat == "coin_spawn":
+                self.inventory['Upgrades'][stat] = self.inventory["Upgrades"].get("coin_spawn", 2550) - 100
 
             loop = asyncio.get_event_loop()         #tu som vymazal self.
             loop.create_task(self.inventory_send()) #tu som vymazal self.
@@ -848,7 +858,7 @@ class Game:
         self.platforms = Platforms(s_width=SCREEN_WIDTH)
         self.platforms.add(Platform(719, 0, 1260, 1))
 
-        self.power_ups = PowerUps()
+        self.power_ups = PowerUps(coin_spawn=inventory.get("Upgrades", {}).get("coin_spawn", 2550))
 
         self.score = 0
         self.timer = 0
