@@ -14,13 +14,12 @@ FPS = 60
 PLAYER_COLOR = (0, 128, 255)  # Blue
 BACKGROUND_COLOR = (50, 50, 50)  # Dark gray
 PLAYER_SIZE = 50
-PLAYER_SPEED = 5
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, color, image):
-        print(color, image)
+    def __init__(self, x, y, jump, speed, color, image):
         super().__init__()
+        self.jump, self.speed = jump, speed
         if image:
             self.image = pygame.transform.scale(pygame.image.load(f'assets/{image}'), (50, 50))
         elif color:
@@ -30,15 +29,14 @@ class Player(pygame.sprite.Sprite):
         self.vertical_v = 0 #vertical veliocity for jumping and falling + for down, - for up
 
     def update(self, platforms, power_ups, s_f) -> (int, int): #return how much to scroll
-        JUMP_STRENGHT = 23
         keys = pygame.key.get_pressed()
         mouse_pos = pygame.mouse.get_pos()
         pressed, _, _ = pygame.mouse.get_pressed()
 
         if keys[pygame.K_LEFT] or (mouse_pos[0] < 360*s_f and pressed):
-            self.rect.x -= 5
+            self.rect.x -= self.speed
         if keys[pygame.K_RIGHT] or (mouse_pos[0] > 360*s_f and pressed):
-            self.rect.x += 5
+            self.rect.x += self.speed
         self.rect.y += self.vertical_v
         scroll = 0
         if self.rect.y < 400:
@@ -53,7 +51,7 @@ class Player(pygame.sprite.Sprite):
                 if pygame.sprite.collide_rect(platform, self):
                     if self.rect.y < platform.rect.y + self.vertical_v:
                         self.rect.y = platform.rect.y - self.rect.height
-                        self.vertical_v = -JUMP_STRENGHT
+                        self.vertical_v = -self.jump
                         break
         for power_up in power_ups:
             if pygame.sprite.collide_rect(power_up, self):
@@ -446,7 +444,6 @@ class LogInScreen:
                 response_data = json.loads(response)
                 if response_data['message'] == 'User logged in':
                     self.close = (2, response_data['name'], response_data['inventory'])
-                print(response_data['message'])
             else:
                 print("POST Failed")
         except Exception as e:
@@ -528,6 +525,8 @@ class InventoryScreen:
 
         self.create_button(60, 100, 200, 100, 'Player', self.font, action=lambda: self.select('Player'))
         self.create_button(460, 100, 200, 100, 'All', self.font, action=lambda: self.select('All'))
+        if logged:
+            self.create_button(310, 100, 100, 100, '^', pygame.font.Font(None, 100), text_color=(255, 255, 255), color=(0, 255, 0), action=lambda: 6)
 
     def draw(self):
         self.screen.fill((0, 0, 0))
@@ -606,11 +605,91 @@ class InventoryScreen:
                 print("Failed to post data:", e)
 
 
+class UpgradeScreen:
+    def __init__(self, screen, s_f, name, inventory, logged):
+        self.name = name
+        self.inventory = inventory
+        self.screen = screen
+        self.s_f = s_f
+        self.font = pygame.font.Font(None, 36)
+        self.buttons = []
+        self.logged = logged
+        
+        self.create_button(670, 10, 40, 40, 'X', pygame.font.Font(None, 66), color=(255, 0, 0), action=lambda: 5)
+        self.create_button(10, 10, 200, 40, f'coins: {inventory.get('coin', 0)}', self.font, text_color=(255, 171, 0), color=(78, 52, 46))
+        print(inventory["Upgrades"])
+
+        self.create_button(50, 100, 185, 50, f'Jump: {inventory["Upgrades"]['jump']}', self.font)
+        self.create_button(285, 100, 150, 50, '+1', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy('jump'))
+        self.create_button(485, 100, 185, 50, f'price: {self.price('jump')}', self.font, text_color=(255, 171, 0), color=(78, 52, 46))
+
+        self.create_button(50, 200, 185, 50, f'Speed: {inventory["Upgrades"]['speed']}', self.font)
+        self.create_button(285, 200, 150, 50, '+1', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy('speed'))
+        self.create_button(485, 200, 185, 50, f'price: {self.price('speed')}', self.font, text_color=(255, 171, 0), color=(78, 52, 46))
+    
+    def draw(self):
+        self.screen.fill((0, 0, 0))
+        for button in self.buttons:
+            button.draw()
+
+    async def update(self):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click_pos = event.pos
+                    for button in self.buttons:
+                        r = button.check_click(click_pos)
+                        if r:
+                            return r
+
+    def create_button(self, x:int, y:int, width:int, height:int, text:str, font,
+        text_color:tuple[int, int, int]=(0, 0, 0),
+        color:tuple[int, int, int]=(255, 255, 255),
+        hover_color:Union[None, tuple[int, int, int]]=None,
+        action=None
+    ):
+        self.buttons.append(Button(self.screen, self.s_f, x, y, width, height, text, font,text_color, color, hover_color, action))
+
+    def price(self, stat):
+        if stat == "jump":
+            return self.inventory["Upgrades"]['jump']*2//5*5
+        elif stat == "speed":
+            return (self.inventory["Upgrades"]['speed']-3)*50
+
+    def buy(self, stat):
+        if self.logged and self.inventory.get('coin', 0) >= self.price(stat):
+            self.inventory['coin'] -= self.price(stat)
+            self.inventory['Upgrades'][stat] += 1
+
+            loop = asyncio.get_event_loop()         #tu som vymazal self.
+            loop.create_task(self.inventory_send()) #tu som vymazal self.
+            
+            self.__init__(self.screen, self.s_f, self.name, self.inventory, self.logged)
+
+    async def inventory_send(self):
+        if self.logged:
+            handler = RequestHandler()
+            try:
+                response = await handler.post(
+                    f'https://krabica.pythonanywhere.com/update/{self.name}',
+                    data=self.inventory
+                )
+                if response:
+                    print('Bought')
+                else:
+                    print("POST Failed")
+            except Exception as e:
+                print("Failed to post data:", e)
+                
+
 class Game:
-    def __init__(self):
+    def __init__(self, jump, speed):
         pygame.init()
         self.state = 2 #1 for playinf, 2 for end screen, 3 for leaderboard, 4 for log in
         self.menu = None
+
+        self.jump = jump
+        self.speed = speed
 
         info = pygame.display.Info()
         screen_width = info.current_w  # Get the current width
@@ -627,7 +706,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.timer = 0
 
-        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, **self.vis)
+        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, self.jump, self.speed, **self.vis)
         self.objects = pygame.sprite.Group()
         self.objects.add(self.player)
 
@@ -705,7 +784,21 @@ class Game:
                             self.menu.inventory_menu = None
                             self.state = 2
                             continue
+                        case 6:
+                            self.menu.inventory_menu.upgrade_menu = UpgradeScreen(self.internal_surface, self.s_f, self.name, self.inventory, self.logged)
+                            self.state = 6
+                            self.menu.inventory_menu.upgrade_menu.draw()
+                            continue
                     self.menu.inventory_menu.draw()
+                case 6:
+                    match await self.menu.inventory_menu.upgrade_menu.update():
+                        case 5:
+                            self.menu.inventory_menu.upgrade_menu = None
+                            self.state = 5
+                            self.menu.inventory_menu.buttons[1].text = f'coins: {self.inventory.get('coin', 0)}'
+                            self.menu.inventory_menu.draw()
+                            continue
+                    self.menu.inventory_menu.upgrade_menu.draw()
                 case _:
                     print('game state not valid')
             scaled_surface = pygame.transform.scale(self.internal_surface, (SCREEN_WIDTH*self.s_f, SCREEN_HEIGHT*self.s_f))
@@ -745,7 +838,10 @@ class Game:
         self.inventory = inventory
         self.logged = logged
 
-        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, **self.vis)
+        self.jump = inventory.get("Upgrades", {}).get("jump", 23)
+        self.speed = inventory.get("Upgrades", {}).get("speed", 5)
+
+        self.player = Player(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, self.jump, self.speed, **self.vis)
         self.objects = pygame.sprite.Group()
         self.objects.add(self.player)
 
