@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from pydantic import BaseModel, constr
 from bisect import bisect_right
 from fastapi.middleware.cors import CORSMiddleware
+from urllib.parse import unquote
 import json
 import os
 
@@ -32,7 +33,7 @@ USERS_FILE = 'users.json'
 
 def load_data():
     if os.path.exists(LEADERBOARD_FILE):
-        with open(LEADERBOARD_FILE, "r") as f:
+        with open(LEADERBOARD_FILE, "r", encoding='utf8') as f:
             try:
                 data = json.load(f)
                 return [ScoreEntry(**entry) for entry in data.get("leaderboard", [])], data.get("players", {})
@@ -41,12 +42,12 @@ def load_data():
     return [], {}
 
 def save_data():
-    with open(LEADERBOARD_FILE, "w") as f:
+    with open(LEADERBOARD_FILE, "w", encoding='utf8') as f:
         json.dump({"leaderboard": [entry.dict() for entry in leaderboard], "players": players}, f, indent=4)
 
 def load_users():
     if os.path.exists(USERS_FILE):
-        with open(USERS_FILE, "r") as f:
+        with open(USERS_FILE, "r", encoding='utf8') as f:
             try:
                 data = json.load(f)
                 return data, {v['email']:k for k, v in data.items()}
@@ -55,7 +56,7 @@ def load_users():
     return {}, {}
 
 def save_users():
-    with open(USERS_FILE, "w") as f:
+    with open(USERS_FILE, "w", encoding='utf8') as f:
         json.dump(users, f, indent=4)
 
 leaderboard, players = load_data()
@@ -115,6 +116,8 @@ def log_in(data: LogInData):
 
 @app.post('/update/{user}')
 async def update_user(user: str, request: Request):
+    user = unquote(user)
+    print(user)
     data = await request.json()
     if user in users:
         users[user]['inventory'] = data

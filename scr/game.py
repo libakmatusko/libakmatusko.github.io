@@ -6,6 +6,7 @@ from typing import Union
 import json
 import js
 from pygbag.aio.fetch import RequestHandler
+from urllib.parse import quote
 import time
 
 SCREEN_WIDTH = 720
@@ -595,7 +596,7 @@ class InventoryScreen:
             handler = RequestHandler()
             try:
                 response = await handler.post(
-                    f'https://krabica.pythonanywhere.com/update/{self.name}',
+                    f'https://krabica.pythonanywhere.com/update/{quote(self.name)}',
                     data=self.inventory
                 )
                 if response:
@@ -621,15 +622,15 @@ class UpgradeScreen:
         print(inventory["Upgrades"])
 
         self.create_button(50, 100, 185, 50, f'Jump: {inventory["Upgrades"]['jump']}', self.font)
-        self.create_button(285, 100, 150, 50, '+1', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy('jump'))
+        self.create_button(285, 100, 150, 50, '1', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy('jump'))
         self.create_button(485, 100, 185, 50, f'price: {self.price('jump')}', self.font, text_color=(255, 171, 0), color=(78, 52, 46))
 
         self.create_button(50, 200, 185, 50, f'Speed: {inventory["Upgrades"]['speed']}', self.font)
-        self.create_button(285, 200, 150, 50, '+1', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy('speed'))
+        self.create_button(285, 200, 150, 50, '1', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy('speed'))
         self.create_button(485, 200, 185, 50, f'price: {self.price('speed')}', self.font, text_color=(255, 171, 0), color=(78, 52, 46))
 
         self.create_button(50, 300, 185, 50, f'Coins: {(2650-inventory["Upgrades"].get("coin_spawn", 2550))//100}', self.font)
-        self.create_button(285, 300, 150, 50, '-100', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy("coin_spawn"))
+        self.create_button(285, 300, 150, 50, '-100 px', self.font, (255, 255, 255), (0, 255, 0), (0, 220, 0), action=lambda: self.buy("coin_spawn"))
         self.create_button(485, 300, 185, 50, f'price: {self.price("coin_spawn")}', self.font, text_color=(255, 171, 0), color=(78, 52, 46))
     
     def draw(self):
@@ -657,7 +658,7 @@ class UpgradeScreen:
 
     def price(self, stat):
         if stat == "jump":
-            return self.inventory["Upgrades"]['jump']*2//5*5
+            return self.inventory["Upgrades"]['jump']
         elif stat == "speed":
             return (self.inventory["Upgrades"]['speed']-3)*50
         elif stat == "coin_spawn":
@@ -681,7 +682,7 @@ class UpgradeScreen:
             handler = RequestHandler()
             try:
                 response = await handler.post(
-                    f'https://krabica.pythonanywhere.com/update/{self.name}',
+                    f'https://krabica.pythonanywhere.com/update/{quote(self.name)}',
                     data=self.inventory
                 )
                 if response:
@@ -891,7 +892,7 @@ class Game:
             handler = RequestHandler()
             try:
                 response = await handler.post(
-                    f'https://krabica.pythonanywhere.com/update/{self.name}',
+                    f'https://krabica.pythonanywhere.com/update/{quote(self.name)}',
                     data=self.inventory
                 )
                 if response:
