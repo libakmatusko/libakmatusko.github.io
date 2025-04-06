@@ -36,14 +36,14 @@ def load_data():
         with open(LEADERBOARD_FILE, "r", encoding='utf8') as f:
             try:
                 data = json.load(f)
-                return [ScoreEntry(**entry) for entry in data.get("leaderboard", [])], data.get("players", {})
+                return [ScoreEntry(**entry) for entry in data]
             except json.JSONDecodeError:
-                return [], {}
-    return [], {}
+                return []
+    return []
 
 def save_data():
     with open(LEADERBOARD_FILE, "w", encoding='utf8') as f:
-        json.dump({"leaderboard": [entry.dict() for entry in leaderboard], "players": players}, f, indent=4)
+        json.dump([entry.dict() for entry in leaderboard], f, indent=4)
 
 def load_users():
     if os.path.exists(USERS_FILE):
@@ -59,7 +59,8 @@ def save_users():
     with open(USERS_FILE, "w", encoding='utf8') as f:
         json.dump(users, f, indent=4)
 
-leaderboard, players = load_data()
+leaderboard = load_data()
+players = {run.name: run.score for run in leaderboard}
 users, email_to_user = load_users()
 
 @app.get("/")
@@ -73,18 +74,18 @@ def leaderboard_view():
 @app.post("/new_run")
 def new_run(entry: ScoreEntry):
     if entry.name in players:
-        if players[entry.name]["score"] >= entry.score:
+        if players[entry.name] >= entry.score:
             return {"message": "Score not improved", "position": get_index(entry.name) + 1, 'max':leaderboard[0].score}
         
-        leaderboard.pop(bisect_right(leaderboard, -players[entry.name]["score"], key=lambda x: -x.score) - 1)
+        leaderboard.pop(bisect_right(leaderboard, -players[entry.name], key=lambda x: -x.score) - 1)
         
         index = bisect_right(leaderboard, -entry.score, key=lambda x: -x.score)
         leaderboard.insert(index, entry)
-        players[entry.name] = entry.dict()
+        players[entry.name] = entry.score
     else:
         index = bisect_right(leaderboard, -entry.score, key=lambda x: -x.score)
         leaderboard.insert(index, entry)
-        players[entry.name] = entry.dict()
+        players[entry.name] = entry.score
     
     save_data()
     return {"message": "Score added", "position": index + 1, 'max':leaderboard[0].score}
